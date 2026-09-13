@@ -221,6 +221,7 @@
     </select>
     <div class="spacer"></div>
     <button class="btn-new" onclick="openForm()">+ New assignment</button>
+    <button class="icon-btn" title="Delete all assignments and reset storage" onclick="clearAllData()" style="border:1px solid var(--line); border-radius:5px; padding:9px 12px;">Clear all data</button>
   </div>
 
   <div id="listArea"></div>
@@ -307,8 +308,8 @@
 
 <div class="overlay" id="confirmOverlay">
   <div class="modal" style="max-width:340px; text-align:center;">
-    <h2 style="font-size:17px; margin-bottom:10px;">Delete this assignment?</h2>
-    <p style="font-size:13.5px; color:var(--slate); margin-bottom:18px;">This can't be undone.</p>
+    <h2 id="confirmTitle" style="font-size:17px; margin-bottom:10px;">Delete this assignment?</h2>
+    <p id="confirmMessage" style="font-size:13.5px; color:var(--slate); margin-bottom:18px;">This can't be undone.</p>
     <div class="modal-actions" style="justify-content:center;">
       <button class="btn-secondary" onclick="closeModal('confirmOverlay')">Cancel</button>
       <button class="btn-primary" style="background:var(--danger);" id="confirmDeleteBtn">Delete</button>
@@ -320,16 +321,6 @@
   const STORE_KEY = 'docket_assignments_v1';
 
   let assignments = load();
-  if(assignments.length === 0){
-    assignments = [
-      {id:1, title:'Lab report: titration', cls:'Chemistry', due:addDays(1), priority:'high', estTime:'2 hrs', link:'', notes:'Use the data from Tuesday\'s experiment. Include error analysis.', subtasks:[{text:'Write hypothesis',done:true},{text:'Chart results',done:false},{text:'Error analysis section',done:false}], done:false},
-      {id:2, title:'Chapter 5 problem set', cls:'Algebra II', due:addDays(3), priority:'medium', estTime:'45 min', link:'', notes:'', subtasks:[], done:false},
-      {id:3, title:'Essay draft: To Kill a Mockingbird', cls:'English 10', due:addDays(-1), priority:'high', estTime:'1.5 hrs', link:'', notes:'Focus on the Boo Radley arc.', subtasks:[{text:'Outline',done:true},{text:'Write draft',done:false}], done:false},
-      {id:4, title:'Reading response ch.6', cls:'US History', due:addDays(6), priority:'low', estTime:'', link:'', notes:'', subtasks:[], done:false},
-      {id:5, title:'Vocabulary quiz prep', cls:'Spanish II', due:addDays(2), priority:'medium', estTime:'20 min', link:'', notes:'', subtasks:[], done:true, doneAt: Date.now() - (2*60*60*1000)},
-    ];
-    save();
-  }
 
   function addDays(n){
     const d = new Date();
@@ -345,11 +336,26 @@
     document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
   }
   function load(){
-    try{ return JSON.parse(getCookie(STORE_KEY)) || []; }
-    catch(e){ return []; }
+    // Prefer the cookie; some browsers (Chrome especially) silently refuse to
+    // set cookies on file:// pages, so fall back to localStorage if the
+    // cookie is empty but a localStorage copy exists.
+    try{
+      const cookieVal = getCookie(STORE_KEY);
+      if(cookieVal) return JSON.parse(cookieVal) || [];
+      const lsVal = localStorage.getItem(STORE_KEY);
+      if(lsVal) return JSON.parse(lsVal) || [];
+      return [];
+    } catch(e){ return []; }
   }
   function save(){
-    setCookie(STORE_KEY, JSON.stringify(assignments), 365);
+    const json = JSON.stringify(assignments);
+    setCookie(STORE_KEY, json, 365);
+    // Verify the cookie actually took (browsers can refuse writes on
+    // file:// pages without throwing an error). If it didn't stick,
+    // fall back to localStorage so data still persists.
+    if(getCookie(STORE_KEY) !== json){
+      try{ localStorage.setItem(STORE_KEY, json); } catch(e){ /* ignore */ }
+    }
   }
 
   function fmtDate(iso){
@@ -474,21 +480,34 @@
     save(); render();
   }
 
-  let pendingDeleteId = null;
+  let pendingConfirmAction = null;
 
-  function deleteAssignment(id){
-    pendingDeleteId = id;
+  function openConfirm(title, message, onConfirm){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    pendingConfirmAction = onConfirm;
     document.getElementById('confirmOverlay').classList.add('show');
   }
 
-  document.getElementById('confirmDeleteBtn').onclick = () => {
-    if(pendingDeleteId !== null){
-      assignments = assignments.filter(a=>a.id!==pendingDeleteId);
+  function deleteAssignment(id){
+    openConfirm('Delete this assignment?', "This can't be undone.", () => {
+      assignments = assignments.filter(a=>a.id!==id);
       save();
-      pendingDeleteId = null;
-    }
+      closeModal('detailOverlay');
+    });
+  }
+
+  function clearAllData(){
+    openConfirm('Clear all assignments?', 'This deletes every assignment and resets Docket to empty. This can\'t be undone.', () => {
+      assignments = [];
+      save();
+    });
+  }
+
+  document.getElementById('confirmDeleteBtn').onclick = () => {
+    if(pendingConfirmAction) pendingConfirmAction();
+    pendingConfirmAction = null;
     closeModal('confirmOverlay');
-    closeModal('detailOverlay');
     render();
   };
 
