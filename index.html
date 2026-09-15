@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Docket — Assignment Manager</title>
+<title>Pengu Assist — Assignment Manager</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%231F3D34' rx='28'/%3E%3Cg fill='none' stroke='%23F1EFE6' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M100 40 C130 40 148 62 148 95 C148 140 132 165 100 165 C68 165 52 140 52 95 C52 62 70 40 100 40 Z'/%3E%3Cpath d='M100 55 C118 55 128 70 128 90 C128 118 116 130 100 130 C84 130 72 118 72 90 C72 70 82 55 100 55 Z'/%3E%3Ccircle cx='88' cy='72' r='3' fill='%23F1EFE6' stroke='none'/%3E%3Ccircle cx='112' cy='72' r='3' fill='%23F1EFE6' stroke='none'/%3E%3Cpath d='M92 82 L108 82 L100 92 Z' fill='%23C79A3D' stroke='none'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
@@ -39,10 +40,8 @@
   }
   .brand{display:flex; align-items:center; gap:11px;}
   .brand-mark{
-    width:30px;height:30px;background:var(--gold);
+    width:44px;height:44px;
     display:flex;align-items:center;justify-content:center;
-    font-family:'Source Serif 4',serif; font-weight:600; color:var(--forest-deep);
-    border-radius:4px;
     transform:rotate(-4deg);
   }
   .brand h1{font-size:21px; color:#fff;}
@@ -186,9 +185,20 @@
 
 <header>
   <div class="brand">
-    <div class="brand-mark">D</div>
+    <div class="brand-mark">
+      <svg width="44" height="44" viewBox="0 0 200 200">
+        <rect width="200" height="200" fill="#1F3D34" rx="28"/>
+        <g fill="none" stroke="#F1EFE6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M100 40 C130 40 148 62 148 95 C148 140 132 165 100 165 C68 165 52 140 52 95 C52 62 70 40 100 40 Z"/>
+          <path d="M100 55 C118 55 128 70 128 90 C128 118 116 130 100 130 C84 130 72 118 72 90 C72 70 82 55 100 55 Z"/>
+          <circle cx="88" cy="72" r="3" fill="#F1EFE6" stroke="none"/>
+          <circle cx="112" cy="72" r="3" fill="#F1EFE6" stroke="none"/>
+          <path d="M92 82 L108 82 L100 92 Z" fill="#C79A3D" stroke="none"/>
+        </g>
+      </svg>
+    </div>
     <div>
-      <h1>Docket</h1>
+      <h1>Pengu Assist</h1>
       <div class="tag">Assignment manager</div>
     </div>
   </div>
@@ -498,7 +508,7 @@
   }
 
   function clearAllData(){
-    openConfirm('Clear all assignments?', 'This deletes every assignment and resets Docket to empty. This can\'t be undone.', () => {
+    openConfirm('Clear all assignments?', 'This deletes every assignment and resets Pengu Assist to empty. This can\'t be undone.', () => {
       assignments = [];
       save();
     });
