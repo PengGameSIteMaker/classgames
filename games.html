@@ -88,9 +88,40 @@
 
   .cabinet-row{display:flex; flex-wrap:wrap; gap:34px; justify-content:center;}
 
+  .daily-pick{
+    max-width:440px; margin:0 auto 36px;
+    background:var(--surface); border:1px solid var(--amber);
+    border-radius:14px; padding:18px 20px;
+    display:flex; align-items:center; gap:16px;
+    box-shadow:0 0 0 1px rgba(255,200,87,0.15), 0 8px 24px rgba(255,200,87,0.10);
+  }
+  .daily-pick .screen{width:64px; height:64px; flex-shrink:0;}
+  .daily-pick-info{flex:1; min-width:0;}
+  .daily-pick-label{
+    font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--amber); margin-bottom:4px;
+  }
+  .daily-pick-title{
+    font-family:'Baloo 2',cursive; font-size:19px; font-weight:700; color:var(--cream);
+  }
+  .daily-pick a.play-btn{
+    background:var(--amber); color:var(--bg); text-decoration:none;
+    font-size:12.5px; font-weight:700; padding:8px 16px; border-radius:7px;
+    white-space:nowrap; flex-shrink:0;
+  }
+  .daily-pick a.play-btn:hover{filter:brightness(1.08);}
+
+  .today-badge{
+    position:absolute; top:-8px; right:-8px; z-index:2;
+    background:var(--amber); color:var(--bg);
+    font-family:'Space Mono',monospace; font-size:9px; font-weight:700;
+    padding:3px 6px; border-radius:5px; letter-spacing:.03em;
+    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+  }
+
   .cabinet{
     display:flex; flex-direction:column; align-items:center; gap:12px;
-    text-decoration:none; width:150px;
+    text-decoration:none; width:150px; position:relative;
   }
   .screen{
     width:150px; height:150px; border-radius:12px;
@@ -101,12 +132,24 @@
     transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
   }
   .screen svg{width:78%; height:78%;}
-  .cabinet[data-accent="cyan"] .screen{box-shadow:inset 0 0 0 1px transparent;}
-  .cabinet:hover .screen{transform:translateY(-4px);}
-  .cabinet[data-accent="cyan"]:hover .screen{border-color:var(--cyan); box-shadow:0 0 0 1px var(--cyan), 0 10px 26px rgba(76,201,240,0.22);}
-  .cabinet[data-accent="magenta"]:hover .screen{border-color:var(--magenta); box-shadow:0 0 0 1px var(--magenta), 0 10px 26px rgba(232,85,139,0.22);}
-  .cabinet[data-accent="amber"]:hover .screen{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber), 0 10px 26px rgba(255,200,87,0.22);}
+  .screen img{width:100%; height:100%; object-fit:cover; display:block;}
+  .screen{position:relative;}
+  .cabinet:hover .screen{
+    transform:translateY(-4px);
+    border-color: var(--glow, var(--amber));
+    box-shadow: 0 0 0 1px var(--glow, var(--amber)), 0 10px 26px rgba(var(--glow-rgb, 255,200,87), 0.22);
+  }
   .cabinet:focus-visible .screen{outline:2px solid var(--amber); outline-offset:3px;}
+
+  .cabinet.locked{cursor:default;}
+  .cabinet.locked .screen{opacity:.35; filter:grayscale(60%);}
+  .cabinet.locked:hover .screen{transform:none; border-color:var(--surface-line); box-shadow:none;}
+  .lock-overlay{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:26px; background:rgba(18,19,26,0.35);
+  }
+  .cabinet.locked .nameplate{color:var(--amber); opacity:.9;}
+  .cabinet.locked:hover .nameplate{color:var(--amber);}
 
   .nameplate{
     font-family:'Space Mono',monospace;
@@ -139,6 +182,8 @@
 </div>
 
 <main>
+  <div id="dailyPick" style="display:none;"></div>
+
   <div class="search-wrap">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B8FA3" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="gameSearch" placeholder="Search games…" oninput="filterGames()">
@@ -155,36 +200,32 @@
         as a starting template — keep its "← Games" link pointing back
         to games.html).
      2. Add one entry to the GAMES array below — `label`, `keywords`
-        (used by search), `file` (the page's filename), `accent`
-        ('cyan' | 'magenta' | 'amber' — controls the cabinet's glow),
-        and `image` (inline SVG, ideally using the accent's color).
+        (used by search), `file` (the page's filename), and `image`
+        (inline SVG). The hover glow color is picked automatically from
+        the most prominent non-background color in your SVG — no need
+        to set it manually.
      That's it — the cabinet row and search box update automatically.
+
+     TO SCHEDULE A GAME'S RELEASE:
+     Add a `releaseDate` field, e.g. releaseDate: '2026-10-01'. Until
+     that date, the cabinet shows locked with a countdown instead of
+     being playable, and unlocks automatically once the date arrives.
+     Leave releaseDate out entirely (or set it to a past date) for a
+     game that's available right away.
   ===================================================================== */
   const GAMES = [
     {
-      label: 'The Binding of Isaac',
-      keywords: 'binding of isaac isaac action adventure',
-      file: 'issac/isaac.html',
-      accent: 'cyan',
-      image: `<svg viewBox="0 0 100 100">
-        <g stroke="#4CC9F0" stroke-width="4" stroke-linecap="round">
-          <line x1="34" y1="14" x2="34" y2="86"/>
-          <line x1="66" y1="14" x2="66" y2="86"/>
-          <line x1="14" y1="34" x2="86" y2="34"/>
-          <line x1="14" y1="66" x2="86" y2="66"/>
-        </g>
-        <g stroke="#F2EFE6" stroke-width="6" stroke-linecap="round">
-          <line x1="20" y1="20" x2="30" y2="30"/>
-          <line x1="30" y1="20" x2="20" y2="30"/>
-        </g>
-        <circle cx="50" cy="50" r="7" fill="none" stroke="#F2EFE6" stroke-width="5"/>
-      </svg>`
+      label: 'Binding of Isaac: Wrath of the Lamb',
+      keywords: 'binding isaac wrath lamb',
+      file: '/issac/isaac.html',
+      releaseDate: '2026-06-01',
+      image: `<img src="/images/binding-of-isaac-wrath-of-lamb-button-edit-1643060101425.svg" alt="Binding of Isaac: Wrath of the Lamb" />`
     },
     {
       label: 'Memory Match',
       keywords: 'memory match cards pairs',
       file: 'game-memory-match.html',
-      accent: 'magenta',
+      releaseDate: '2026-06-15',
       image: `<svg viewBox="0 0 100 100">
         <rect x="22" y="30" width="30" height="42" rx="5" fill="#F2EFE6" transform="rotate(-8 37 51)"/>
         <rect x="48" y="30" width="30" height="42" rx="5" fill="#E8558B" transform="rotate(8 63 51)"/>
@@ -194,23 +235,195 @@
       label: 'Rock · Paper · Scissors',
       keywords: 'rock paper scissors',
       file: 'game-rock-paper-scissors.html',
-      accent: 'amber',
+      releaseDate: '2026-07-01',
       image: `<svg viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="30" fill="none" stroke="#FFC857" stroke-width="4"/>
         <text x="50" y="61" font-size="30" text-anchor="middle">✊</text>
+      </svg>`
+    },
+    {
+      label: 'Connect Four',
+      keywords: 'connect four in a row',
+      file: 'game-connect-four.html',
+      releaseDate: '2026-08-01',
+      image: `<svg viewBox="0 0 100 100">
+        <rect x="15" y="15" width="70" height="70" rx="8" fill="#1F3D34"/>
+        <circle cx="32" cy="32" r="8" fill="#F2EFE6"/>
+        <circle cx="50" cy="32" r="8" fill="#E8558B"/>
+        <circle cx="68" cy="32" r="8" fill="#F2EFE6"/>
+        <circle cx="32" cy="50" r="8" fill="#E8558B"/>
+        <circle cx="50" cy="50" r="8" fill="#F2EFE6"/>
+        <circle cx="68" cy="50" r="8" fill="#E8558B"/>
+      </svg>`
+    },
+    {
+      label: 'Whack-a-Mole',
+      keywords: 'whack a mole reaction',
+      file: 'game-whack-a-mole.html',
+      releaseDate: '2026-08-15',
+      image: `<svg viewBox="0 0 100 100">
+        <circle cx="50" cy="55" r="34" fill="#152B24"/>
+        <circle cx="50" cy="50" r="24" fill="#8B5E34"/>
+        <circle cx="41" cy="46" r="3.5" fill="#1F3D34"/>
+        <circle cx="59" cy="46" r="3.5" fill="#1F3D34"/>
+        <ellipse cx="50" cy="57" rx="6" ry="4" fill="#F2EFE6"/>
+      </svg>`
+    },
+    {
+      label: 'Simon Says',
+      keywords: 'simon says memory sequence colors',
+      file: 'game-simon-says.html',
+      releaseDate: '2026-09-01',
+      image: `<svg viewBox="0 0 100 100">
+        <path d="M50 15 A35 35 0 0 1 85 50 L50 50 Z" fill="#3EC9A7"/>
+        <path d="M85 50 A35 35 0 0 1 50 85 L50 50 Z" fill="#E8558B"/>
+        <path d="M50 85 A35 35 0 0 1 15 50 L50 50 Z" fill="#FFC857"/>
+        <path d="M15 50 A35 35 0 0 1 50 15 L50 50 Z" fill="#4CC9F0"/>
+        <circle cx="50" cy="50" r="12" fill="#1F3D34"/>
+      </svg>`
+    },
+    {
+      label: 'Snake',
+      keywords: 'snake classic arcade',
+      file: 'game-snake.html',
+      releaseDate: '2026-09-08',
+      image: `<svg viewBox="0 0 100 100">
+        <rect width="100" height="100" fill="#152B24"/>
+        <rect x="20" y="45" width="16" height="16" fill="#7ED957"/>
+        <rect x="36" y="45" width="16" height="16" fill="#7ED957"/>
+        <rect x="52" y="45" width="16" height="16" fill="#9BE97A"/>
+        <rect x="68" y="29" width="12" height="12" fill="#FFC857"/>
+      </svg>`
+    },
+    {
+      label: 'Hangman',
+      keywords: 'hangman word guess letters',
+      file: 'game-hangman.html',
+      releaseDate: '2026-09-14',
+      image: `<svg viewBox="0 0 100 100">
+        <g stroke="#9B6BCE" stroke-width="5" stroke-linecap="round" fill="none">
+          <line x1="20" y1="85" x2="60" y2="85"/>
+          <line x1="30" y1="85" x2="30" y2="15"/>
+          <line x1="30" y1="15" x2="65" y2="15"/>
+          <line x1="65" y1="15" x2="65" y2="28"/>
+        </g>
+        <circle cx="65" cy="38" r="9" fill="none" stroke="#9B6BCE" stroke-width="5"/>
+        <line x1="65" y1="47" x2="65" y2="65" stroke="#9B6BCE" stroke-width="5"/>
+        <line x1="65" y1="52" x2="55" y2="60" stroke="#9B6BCE" stroke-width="5" stroke-linecap="round"/>
+        <line x1="65" y1="52" x2="75" y2="60" stroke="#9B6BCE" stroke-width="5" stroke-linecap="round"/>
       </svg>`
     }
     // Add new game objects here ↑
   ];
 
+  // Deterministic per-day "random" pick: same result for everyone, all day,
+  // and it changes at midnight — because it's derived from today's date
+  // string rather than Math.random(), which would pick a new game on
+  // every single page load instead of once per day.
+  function hashString(str){
+    let hash = 0;
+    for(let i = 0; i < str.length; i++){
+      hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function getDailyPick(){
+    const available = GAMES.filter(g => !isLocked(g));
+    if(available.length === 0) return null;
+    const todayStr = new Date().toISOString().slice(0,10); // e.g. "2026-09-16"
+    const index = hashString(todayStr) % available.length;
+    return available[index];
+  }
+
+  function renderDailyPick(){
+    const pick = getDailyPick();
+    const el = document.getElementById('dailyPick');
+    if(!pick){
+      el.style.display = 'none';
+      return;
+    }
+    el.className = 'daily-pick';
+    el.style.display = 'flex';
+    el.innerHTML = `
+      <span class="screen">${pick.image}</span>
+      <span class="daily-pick-info">
+        <div class="daily-pick-label">🎲 Today's pick</div>
+        <div class="daily-pick-title">${pick.label}</div>
+      </span>
+      <a class="play-btn" href="${pick.file}">Play</a>
+    `;
+  }
+
+  // Picks the glow color for a cabinet straight from its own SVG, instead
+  // of requiring a manually-chosen accent per game. It counts fill/stroke
+  // colors used in the image, ignores the shared base palette (the cream
+  // and dark-forest tones nearly every icon uses for outlines/background),
+  // and returns whichever remaining color appears most — that's treated as
+  // the game's "main" color. Falls back to amber if nothing distinctive
+  // is found (e.g. an icon drawn entirely in the shared base colors).
+  const SHARED_BASE_COLORS = new Set(['#F2EFE6', '#1F3D34', '#152B24', '#12131A', '#1C1E28']);
+
+  function hexToRgb(hex){
+    const clean = hex.replace('#', '');
+    const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
+    const num = parseInt(full, 16);
+    return `${(num >> 16) & 255},${(num >> 8) & 255},${num & 255}`;
+  }
+
+  function extractMainColor(svgString){
+    const matches = svgString.match(/(?:fill|stroke)="(#[0-9a-fA-F]{3,6})"/g) || [];
+    const counts = {};
+    matches.forEach(m => {
+      const hex = m.match(/#[0-9a-fA-F]{3,6}/)[0].toUpperCase();
+      if(SHARED_BASE_COLORS.has(hex)) return;
+      counts[hex] = (counts[hex] || 0) + 1;
+    });
+    const entries = Object.entries(counts);
+    if(entries.length === 0) return '#FFC857'; // fallback: amber
+    entries.sort((a, b) => b[1] - a[1]);
+    return entries[0][0];
+  }
+
+  function daysUntil(dateStr){
+    const target = new Date(dateStr + 'T00:00:00');
+    const today = new Date(new Date().toISOString().slice(0,10) + 'T00:00:00');
+    return Math.ceil((target - today) / (24*60*60*1000));
+  }
+
+  function isLocked(game){
+    return !!game.releaseDate && daysUntil(game.releaseDate) > 0;
+  }
+
+  function releaseLabel(game){
+    const days = daysUntil(game.releaseDate);
+    const dateStr = new Date(game.releaseDate + 'T00:00:00').toLocaleDateString(undefined, { month:'short', day:'numeric' });
+    if(days === 1) return `Coming tomorrow`;
+    if(days <= 7) return `Coming in ${days}d · ${dateStr}`;
+    return `Coming ${dateStr}`;
+  }
+
   function buildGameGrid(){
     const grid = document.getElementById('gameGrid');
-    grid.innerHTML = GAMES.map(g => `
-      <a class="cabinet" data-name="${g.keywords}" data-accent="${g.accent}" href="${g.file}">
-        <span class="screen">${g.image}</span>
-        <span class="nameplate">${g.label}</span>
-      </a>
-    `).join('');
+    const dailyPick = getDailyPick();
+    grid.innerHTML = GAMES.map(g => {
+      const locked = isLocked(g);
+      const tag = locked ? 'div' : 'a';
+      const hrefAttr = locked ? '' : `href="${g.file}"`;
+      const isToday = dailyPick && g.file === dailyPick.file;
+      const glowColor = extractMainColor(g.image);
+      const glowRgb = hexToRgb(glowColor);
+      return `
+        <${tag} class="cabinet${locked ? ' locked' : ''}" data-name="${g.keywords}" style="--glow:${glowColor}; --glow-rgb:${glowRgb};" ${hrefAttr}>
+          ${isToday ? `<span class="today-badge">TODAY</span>` : ''}
+          <span class="screen">
+            ${g.image}
+            ${locked ? `<span class="lock-overlay">🔒</span>` : ''}
+          </span>
+          <span class="nameplate">${locked ? releaseLabel(g) : g.label}</span>
+        </${tag}>
+      `;
+    }).join('');
   }
 
   function filterGames(){
@@ -225,6 +438,7 @@
     document.getElementById('gameEmpty').style.display = visibleCount === 0 ? 'block' : 'none';
   }
 
+  renderDailyPick();
   buildGameGrid();
 </script>
 
