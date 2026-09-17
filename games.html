@@ -72,7 +72,18 @@
     .bulb{animation:none; opacity:.85;}
   }
 
-  main{max-width:900px; margin:0 auto; padding:14px 24px 70px;}
+  @media (max-width: 700px){
+    .cabinet-row{gap:26px 18px;}
+    .cabinet{width:clamp(100px, 27vw, 130px);}
+  }
+
+  @media (max-width: 480px){
+    .cabinet-row{gap:22px 14px;}
+    .cabinet{width:clamp(90px, 38vw, 120px);}
+    .nameplate{font-size:10.5px; letter-spacing:.04em;}
+  }
+
+  main{max-width:1200px; margin:0 auto; padding:14px 24px 70px;}
 
   .search-wrap{position:relative; max-width:280px; margin:0 auto 44px;}
   .search-wrap svg{
@@ -86,7 +97,10 @@
   .search-wrap input::placeholder{color:var(--slate);}
   .search-wrap input:focus{outline:none; border-color:var(--amber);}
 
-  .cabinet-row{display:flex; flex-wrap:wrap; gap:34px; justify-content:center;}
+  .cabinet-row{
+    display:flex; flex-wrap:wrap; gap:32px 24px; justify-content:center;
+    align-items:flex-start;
+  }
 
   .daily-pick{
     max-width:440px; margin:0 auto 36px;
@@ -121,10 +135,11 @@
 
   .cabinet{
     display:flex; flex-direction:column; align-items:center; gap:12px;
-    text-decoration:none; width:150px; position:relative;
+    text-decoration:none; width:clamp(92px, 9vw, 138px); position:relative;
+    flex: 0 0 auto;
   }
   .screen{
-    width:150px; height:150px; border-radius:12px;
+    width:100%; aspect-ratio:1; border-radius:12px;
     background:var(--surface);
     border:1px solid var(--surface-line);
     display:flex; align-items:center; justify-content:center;
@@ -229,14 +244,11 @@
       image: `<img src="images/slope.jpeg" alt="Slope" />`
     },
     {
-      label: 'Rock · Paper · Scissors',
-      keywords: 'rock paper scissors',
-      file: 'game-rock-paper-scissors.html',
-      releaseDate: '2026-07-01',
-      image: `<svg viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="30" fill="none" stroke="#FFC857" stroke-width="4"/>
-        <text x="50" y="61" font-size="30" text-anchor="middle">✊</text>
-      </svg>`
+      label: 'Tunnel Rush',
+      keywords: 'tunnel rush',
+      file: '/Tunnel-Rush/index.html',
+      releaseDate: '2026-09-28',
+      image: `<img src="images/tunnel-rush-icon-filled-256.png" alt="Tunnel Rush" />`
     },
     {
       label: 'Connect Four',
