@@ -148,6 +148,7 @@
   }
   .screen svg{width:78%; height:78%;}
   .screen img{width:100%; height:100%; object-fit:cover; display:block;}
+  .screen img.placeholder-image{object-fit:cover; padding:0; filter:invert(1);}
   .screen{position:relative;}
   .cabinet:hover .screen{
     transform:translateY(-4px);
@@ -216,9 +217,8 @@
         to games.html).
      2. Add one entry to the GAMES array below — `label`, `keywords`
         (used by search), `file` (the page's filename), and `image`
-        (inline SVG). The hover glow color is picked automatically from
-        the most prominent non-background color in your SVG — no need
-        to set it manually.
+        (an image link). Games without artwork use the inverted
+        question-mark image automatically.
      That's it — the cabinet row and search box update automatically.
 
      TO SCHEDULE A GAME'S RELEASE:
@@ -265,61 +265,123 @@
         image: `<img src="images/minecraft.png" alt="Minecraft 1.5.2" />`
     },
     {
+      label: 'Minecraft 1.8.8',
+      keywords: 'minecraft 1.8.8',
+      file: '/minecraft/EaglercraftX_1.8_u53_Offline_Signed/EaglercraftX_1.8_u53_Offline_Signed.html',
+      releaseDate: '2026-10-07', 
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
       label: '?',
       keywords: '?',
-      file: 'game-whack-a-mole.html',
-      releaseDate: '2026-10-07', 
-      image: `<svg viewBox="0 0 100 100">
-        <circle cx="50" cy="55" r="34" fill="#152B24"/>
-        <circle cx="50" cy="50" r="24" fill="#8B5E34"/>
-        <circle cx="41" cy="46" r="3.5" fill="#1F3D34"/>
-        <circle cx="59" cy="46" r="3.5" fill="#1F3D34"/>
-        <ellipse cx="50" cy="57" rx="6" ry="4" fill="#F2EFE6"/>
-      </svg>`
+      file: '/JS-Tetris-master/JS-Tetris-master/index.html',
+      releaseDate: '2026-10-09',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: 'Tetris',
+      keywords: 'react tetris',
+      file: '/react-tetris-master/react-tetris-master/docs/index.html',
+      releaseDate: '2026-10-14',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
     },
     {
       label: '?',
       keywords: '?',
       file: 'game-simon-says.html',
-      releaseDate: '2026-10-09',
-      image: `<svg viewBox="0 0 100 100">
-        <path d="M50 15 A35 35 0 0 1 85 50 L50 50 Z" fill="#3EC9A7"/>
-        <path d="M85 50 A35 35 0 0 1 50 85 L50 50 Z" fill="#E8558B"/>
-        <path d="M50 85 A35 35 0 0 1 15 50 L50 50 Z" fill="#FFC857"/>
-        <path d="M15 50 A35 35 0 0 1 50 15 L50 50 Z" fill="#4CC9F0"/>
-        <circle cx="50" cy="50" r="12" fill="#1F3D34"/>
-      </svg>`
+      releaseDate: '2026-10-16',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
     },
     {
       label: '?',
       keywords: '?',
       file: 'game-snake.html',
-      releaseDate: '2026-10-14',
-      image: `<svg viewBox="0 0 100 100">
-        <rect width="100" height="100" fill="#152B24"/>
-        <rect x="20" y="45" width="16" height="16" fill="#7ED957"/>
-        <rect x="36" y="45" width="16" height="16" fill="#7ED957"/>
-        <rect x="52" y="45" width="16" height="16" fill="#9BE97A"/>
-        <rect x="68" y="29" width="12" height="12" fill="#FFC857"/>
-      </svg>`
+      releaseDate: '2026-10-20',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
     },
     {
       label: '?',
       keywords: '?',
       file: 'game-hangman.html',
-      releaseDate: '2026-10-16',
-      image: `<svg viewBox="0 0 100 100">
-        <g stroke="#9B6BCE" stroke-width="5" stroke-linecap="round" fill="none">
-          <line x1="20" y1="85" x2="60" y2="85"/>
-          <line x1="30" y1="85" x2="30" y2="15"/>
-          <line x1="30" y1="15" x2="65" y2="15"/>
-          <line x1="65" y1="15" x2="65" y2="28"/>
-        </g>
-        <circle cx="65" cy="38" r="9" fill="none" stroke="#9B6BCE" stroke-width="5"/>
-        <line x1="65" y1="47" x2="65" y2="65" stroke="#9B6BCE" stroke-width="5"/>
-        <line x1="65" y1="52" x2="55" y2="60" stroke="#9B6BCE" stroke-width="5" stroke-linecap="round"/>
-        <line x1="65" y1="52" x2="75" y2="60" stroke="#9B6BCE" stroke-width="5" stroke-linecap="round"/>
-      </svg>`
+      releaseDate: '2026-10-23',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-pong.html',
+      releaseDate: '2026-10-23',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-breakout.html',
+      releaseDate: '2026-10-23',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-flappy-bird.html',
+      releaseDate: '2026-10-27',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-minesweeper.html',
+      releaseDate: '2026-10-30',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-platformer.html',
+      releaseDate: '2026-11-02',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-memory.html',
+      releaseDate: '2026-11-05',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-chess.html',
+      releaseDate: '2026-11-08',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-checkers.html',
+      releaseDate: '2026-11-11',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-asteroids.html',
+      releaseDate: '2026-11-14',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-space-invaders.html',
+      releaseDate: '2026-11-17',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+    },
+    {
+      label: '?',
+      keywords: '?',
+      file: 'game-wordle.html',
+      releaseDate: '2026-11-20',
+      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
     }
     // Add new game objects here ↑
   ];
