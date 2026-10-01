@@ -39,6 +39,14 @@
     display:flex; align-items:center; gap:6px;
   }
   .back-link:hover{color:var(--cream);}
+  .settings-link{
+    margin-left:auto; width:38px; height:38px; display:grid; place-items:center;
+    color:var(--slate); border:1px solid var(--surface-line); border-radius:8px; text-decoration:none;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .settings-link svg{display:block;}
+  .settings-link:hover{color:var(--cream); border-color:var(--amber);}
+  .settings-link:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
 
   .marquee{
     text-align:center;
@@ -71,6 +79,7 @@
   @media (prefers-reduced-motion: reduce){
     .bulb{animation:none; opacity:.85;}
   }
+  .reduced-lights .bulb{animation:none; opacity:.85;}
 
   @media (max-width: 700px){
     .cabinet-row{gap:26px 18px;}
@@ -186,6 +195,9 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     Back to Pengu Assist
   </a>
+  <a class="settings-link" href="settings.html" aria-label="Settings" title="Settings">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4h4l.6 2a7 7 0 0 1 1.5.9l2-.6 2 3.4-1.4 1.5v1.6l1.4 1.5-2 3.4-2-.6a7 7 0 0 1-1.5.9l-.6 2h-4l-.6-2a7 7 0 0 1-1.5-.9l-2 .6-2-3.4 1.4-1.5v-1.6L3.9 9.7l2-3.4 2 .6a7 7 0 0 1 1.5-.9z"/><circle cx="12" cy="12" r="3"/></svg>
+  </a>
 </header>
 
 <div class="marquee">
@@ -283,7 +295,7 @@
       keywords: 'react tetris',
       file: '/react-tetris-master/react-tetris-master/docs/index.html',
       releaseDate: '2026-10-14',
-      image: `<img class="placeholder-image" src="images/symbol_questionmark.png" alt="Image unavailable" />`
+      image: `<img src="images/tetris.png" alt="Tetris" />`
     },
     {
       label: '?',
@@ -409,7 +421,7 @@
   function renderDailyPick(){
     const pick = getDailyPick();
     const el = document.getElementById('dailyPick');
-    if(!pick){
+    if(!pick || !getGameRoomSettings().showDailyPick){
       el.style.display = 'none';
       return;
     }
@@ -480,7 +492,7 @@
       const locked = isLocked(g);
       const tag = locked ? 'div' : 'a';
       const hrefAttr = locked ? '' : `href="${g.file}"`;
-      const isToday = dailyPick && g.file === dailyPick.file;
+      const isToday = getGameRoomSettings().showDailyPick && dailyPick && g.file === dailyPick.file;
       const glowColor = extractMainColor(g.image);
       const glowRgb = hexToRgb(glowColor);
       return `
@@ -496,8 +508,17 @@
     }).join('');
   }
 
-  function filterGames(){
+  function filterGames(allowBetaRedirect = true){
     const q = document.getElementById('gameSearch').value.trim().toLowerCase();
+    if(getGameRoomSettings().rememberSearch){
+      localStorage.setItem('gameRoomSearch', document.getElementById('gameSearch').value);
+    }else{
+      localStorage.removeItem('gameRoomSearch');
+    }
+    if(allowBetaRedirect && q === 'im a beta tester'){
+      window.location.href = 'beta.html';
+      return;
+    }
     const cards = document.querySelectorAll('#gameGrid .cabinet');
     let visibleCount = 0;
     cards.forEach(card => {
@@ -508,8 +529,24 @@
     document.getElementById('gameEmpty').style.display = visibleCount === 0 ? 'block' : 'none';
   }
 
+  function getGameRoomSettings(){
+    try{
+      return { showDailyPick:true, animateLights:true, rememberSearch:false, ...JSON.parse(localStorage.getItem('gameRoomSettings') || '{}') };
+    }catch{
+      return { showDailyPick:true, animateLights:true, rememberSearch:false };
+    }
+  }
+
+  if(!getGameRoomSettings().animateLights){
+    document.documentElement.classList.add('reduced-lights');
+  }
+
   renderDailyPick();
   buildGameGrid();
+  if(getGameRoomSettings().rememberSearch){
+    document.getElementById('gameSearch').value = localStorage.getItem('gameRoomSearch') || '';
+    filterGames(false);
+  }
 </script>
 
 </body>
