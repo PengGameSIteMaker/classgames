@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,15 @@
     --slate:#8B8FA3;
     --amber:#FFC857;
     --cyan:#4CC9F0;
+  }
+  :root[data-theme="light"]{
+    --bg:#EDF3F8;
+    --surface:#F9FAFC;
+    --surface-line:#D9E1EA;
+    --cream:#1C2330;
+    --slate:#586877;
+    --amber:#D39A00;
+    --cyan:#2E87B6;
   }
   *{box-sizing:border-box;}
   body{
@@ -45,6 +54,20 @@
   }
   .setting-row:last-child{border-bottom:0;}
   .setting-label{font-size:15px; font-weight:500;}
+  .settings-actions{
+    margin-top:24px; display:grid; gap:14px;
+  }
+  .action-row{
+    display:flex; flex-wrap:wrap; gap:10px;
+  }
+  .action-btn, .action-link{
+    appearance:none; border:1px solid var(--surface-line); background:var(--surface); color:var(--cream);
+    padding:10px 14px; border-radius:8px; font:600 14px 'Space Grotesk',system-ui,sans-serif;
+    cursor:pointer; text-decoration:none;
+  }
+  .action-btn:hover, .action-link:hover{border-color:var(--amber);}
+  .hidden-file-input{display:none;}
+  .status-text{min-height:20px; font-size:12px; color:var(--slate);}
   .switch{position:relative; flex-shrink:0; width:44px; height:26px;}
   .switch input{position:absolute; width:1px; height:1px; opacity:0;}
   .switch-track{position:absolute; inset:0; border-radius:20px; background:#393B47; transition:background .15s ease;}
@@ -100,6 +123,13 @@
         <span class="switch-track" aria-hidden="true"></span>
       </span>
     </label>
+    <label class="setting-row" for="lightMode">
+      <span class="setting-label">Light mode</span>
+      <span class="switch">
+        <input id="lightMode" type="checkbox">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
     <label class="setting-row" for="muteSite">
       <span class="setting-label">Mute site audio</span>
       <span class="switch">
@@ -108,18 +138,30 @@
       </span>
     </label>
   </div>
+
+  <div class="settings-actions">
+    <div class="action-row">
+      <button type="button" class="action-btn" id="exportSettingsBtn">Download settings</button>
+      <button type="button" class="action-btn" id="importSettingsBtn">Import settings file</button>
+    </div>
+    <input id="settingsFileInput" class="hidden-file-input" type="file" accept="application/json,.json">
+    <div id="settingsStatus" class="status-text" aria-live="polite"></div>
+  </div>
 </main>
 <script>
   const DEFAULT_SETTINGS = {
     showDailyPick:true,
     animateLights:true,
     rememberSearch:false,
-    muteSite:false
+    muteSite:false,
+    lightMode:false,
+    favoriteGames:[]
   };
 
   function readSettings(){
     try{
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('gameRoomSettings') || '{}') };
+      const raw = JSON.parse(localStorage.getItem('gameRoomSettings') || '{}');
+      return { ...DEFAULT_SETTINGS, ...raw, favoriteGames: Array.isArray(raw.favoriteGames) ? raw.favoriteGames : [] };
     }catch{
       return { ...DEFAULT_SETTINGS };
     }
@@ -129,15 +171,20 @@
     document.getElementById('showDailyPick').checked = settings.showDailyPick;
     document.getElementById('animateLights').checked = settings.animateLights;
     document.getElementById('rememberSearch').checked = settings.rememberSearch;
+    document.getElementById('lightMode').checked = settings.lightMode;
     document.getElementById('muteSite').checked = settings.muteSite;
+    document.documentElement.dataset.theme = settings.lightMode ? 'light' : 'dark';
     document.documentElement.classList.toggle('reduced-lights', !settings.animateLights);
   }
 
   function saveSettings(){
+    const existing = readSettings();
     const settings = {
+      ...existing,
       showDailyPick:document.getElementById('showDailyPick').checked,
       animateLights:document.getElementById('animateLights').checked,
       rememberSearch:document.getElementById('rememberSearch').checked,
+      lightMode:document.getElementById('lightMode').checked,
       muteSite:document.getElementById('muteSite').checked
     };
     localStorage.setItem('gameRoomSettings', JSON.stringify(settings));
@@ -145,10 +192,68 @@
       localStorage.removeItem('gameRoomSearch');
     }
     applySettings(settings);
+    window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged', { detail: settings }));
+    return settings;
+  }
+
+  function exportSettings(){
+    const settings = saveSettings();
+    const payload = JSON.stringify(settings, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'game-room-settings.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    document.getElementById('settingsStatus').textContent = 'Settings exported.';
+  }
+
+  function loadSettingsFromText(text){
+    if(!text){
+      document.getElementById('settingsStatus').textContent = 'No settings data found.';
+      return;
+    }
+
+    try{
+      const parsed = JSON.parse(text);
+      const merged = { ...DEFAULT_SETTINGS, ...parsed, favoriteGames: Array.isArray(parsed.favoriteGames) ? parsed.favoriteGames : [] };
+      localStorage.setItem('gameRoomSettings', JSON.stringify(merged));
+      applySettings(merged);
+      window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged', { detail: merged }));
+      if(!merged.rememberSearch){
+        localStorage.removeItem('gameRoomSearch');
+      }
+      document.getElementById('settingsStatus').textContent = 'Settings imported successfully.';
+      document.getElementById('settingsFileInput').value = '';
+    }catch{
+      document.getElementById('settingsStatus').textContent = 'That is not valid settings JSON.';
+    }
+  }
+
+  function importSettings(){
+    document.getElementById('settingsFileInput').click();
+  }
+
+  function handleSettingsFileImport(event){
+    const [file] = event.target.files || [];
+    if(!file){ return; }
+
+    const reader = new FileReader();
+    reader.onload = () => loadSettingsFromText(String(reader.result || ''));
+    reader.onerror = () => {
+      document.getElementById('settingsStatus').textContent = 'Unable to read that settings file.';
+    };
+    reader.readAsText(file);
   }
 
   applySettings(readSettings());
   document.querySelectorAll('.switch input').forEach(input => input.addEventListener('change', saveSettings));
+  document.getElementById('exportSettingsBtn').addEventListener('click', exportSettings);
+  document.getElementById('importSettingsBtn').addEventListener('click', importSettings);
+  document.getElementById('settingsFileInput').addEventListener('change', handleSettingsFileImport);
 </script>
 </body>
 </html>

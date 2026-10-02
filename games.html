@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,16 @@
     --cyan:#4CC9F0;
     --magenta:#E8558B;
     --amber:#FFC857;
+  }
+  :root[data-theme="light"]{
+    --bg:#EDF3F8;
+    --surface:#F9FAFC;
+    --surface-line:#D7E1EC;
+    --cream:#1D2430;
+    --slate:#5A6677;
+    --cyan:#2E87B6;
+    --magenta:#CC4E89;
+    --amber:#D39A00;
   }
   *{box-sizing:border-box;}
   body{
@@ -141,6 +151,15 @@
     padding:3px 6px; border-radius:5px; letter-spacing:.03em;
     box-shadow:0 2px 6px rgba(0,0,0,0.3);
   }
+  .favorite-btn{
+    position:absolute; top:10px; right:10px; z-index:3;
+    width:26px; height:26px; display:grid; place-items:center;
+    border:1px solid rgba(255,255,255,0.15); border-radius:999px;
+    background:rgba(18,19,26,0.7); color:#f2d77e; font-size:15px; line-height:1;
+    cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  }
+  .favorite-btn.is-favorite{background:rgba(255,200,87,0.18); border-color:rgba(255,200,87,0.75);}
+  .favorite-btn:hover{transform:scale(1.05);}
 
   .cabinet{
     display:flex; flex-direction:column; align-items:center; gap:12px;
@@ -485,19 +504,47 @@
     return `Coming ${dateStr}`;
   }
 
+  function getFavoriteGames(){
+    const settings = getGameRoomSettings();
+    return Array.isArray(settings.favoriteGames) ? settings.favoriteGames : [];
+  }
+
+  function updateFavoriteGames(nextFavorites){
+    const settings = getGameRoomSettings();
+    const normalized = Array.from(new Set(nextFavorites.filter(Boolean)));
+    settings.favoriteGames = normalized;
+    localStorage.setItem('gameRoomSettings', JSON.stringify(settings));
+    window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged', { detail: settings }));
+    buildGameGrid();
+  }
+
+  function toggleFavorite(gameFile, event){
+    if(event){ event.preventDefault(); event.stopPropagation(); }
+    const game = GAMES.find(item => item.file === gameFile);
+    if(game && isLocked(game)) return;
+    const favorites = getFavoriteGames();
+    const nextFavorites = favorites.includes(gameFile)
+      ? favorites.filter(item => item !== gameFile)
+      : [...favorites, gameFile];
+    updateFavoriteGames(nextFavorites);
+  }
+
   function buildGameGrid(){
     const grid = document.getElementById('gameGrid');
     const dailyPick = getDailyPick();
+    const favoriteGames = getFavoriteGames();
     grid.innerHTML = GAMES.map(g => {
       const locked = isLocked(g);
       const tag = locked ? 'div' : 'a';
       const hrefAttr = locked ? '' : `href="${g.file}"`;
       const isToday = getGameRoomSettings().showDailyPick && dailyPick && g.file === dailyPick.file;
+      const isFavorite = favoriteGames.includes(g.file);
       const glowColor = extractMainColor(g.image);
       const glowRgb = hexToRgb(glowColor);
       return `
         <${tag} class="cabinet${locked ? ' locked' : ''}" data-name="${g.keywords}" style="--glow:${glowColor}; --glow-rgb:${glowRgb};" ${hrefAttr}>
           ${isToday ? `<span class="today-badge">TODAY</span>` : ''}
+          ${locked ? '' : `<button class="favorite-btn ${isFavorite ? 'is-favorite' : ''}" type="button" aria-label="${isFavorite ? 'Remove from favorites' : 'Add to favorites'}" data-game-file="${g.file}" data-favorited="${isFavorite}">${isFavorite ? '★' : '☆'}</button>`}
           <span class="screen">
             ${g.image}
             ${locked ? `<span class="lock-overlay">🔒</span>` : ''}
@@ -506,6 +553,10 @@
         </${tag}>
       `;
     }).join('');
+
+    grid.querySelectorAll('.favorite-btn').forEach(button => {
+      button.addEventListener('click', event => toggleFavorite(button.dataset.gameFile, event));
+    });
   }
 
   function filterGames(allowBetaRedirect = true){
@@ -531,13 +582,15 @@
 
   function getGameRoomSettings(){
     try{
-      return { showDailyPick:true, animateLights:true, rememberSearch:false, ...JSON.parse(localStorage.getItem('gameRoomSettings') || '{}') };
+      return { showDailyPick:true, animateLights:true, rememberSearch:false, muteSite:false, lightMode:false, favoriteGames:[], ...JSON.parse(localStorage.getItem('gameRoomSettings') || '{}') };
     }catch{
-      return { showDailyPick:true, animateLights:true, rememberSearch:false };
+      return { showDailyPick:true, animateLights:true, rememberSearch:false, muteSite:false, lightMode:false, favoriteGames:[] };
     }
   }
 
-  if(!getGameRoomSettings().animateLights){
+  const currentSettings = getGameRoomSettings();
+  document.documentElement.dataset.theme = currentSettings.lightMode ? 'light' : 'dark';
+  if(!currentSettings.animateLights){
     document.documentElement.classList.add('reduced-lights');
   }
 
