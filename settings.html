@@ -100,10 +100,22 @@
         <span class="switch-track" aria-hidden="true"></span>
       </span>
     </label>
+    <label class="setting-row" for="muteSite">
+      <span class="setting-label">Mute site audio</span>
+      <span class="switch">
+        <input id="muteSite" type="checkbox">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
   </div>
 </main>
 <script>
-  const DEFAULT_SETTINGS = { showDailyPick:true, animateLights:true, rememberSearch:false };
+  const DEFAULT_SETTINGS = {
+    showDailyPick:true,
+    animateLights:true,
+    rememberSearch:false,
+    muteSite:false
+  };
 
   function readSettings(){
     try{
@@ -117,6 +129,7 @@
     document.getElementById('showDailyPick').checked = settings.showDailyPick;
     document.getElementById('animateLights').checked = settings.animateLights;
     document.getElementById('rememberSearch').checked = settings.rememberSearch;
+    document.getElementById('muteSite').checked = settings.muteSite;
     document.documentElement.classList.toggle('reduced-lights', !settings.animateLights);
   }
 
@@ -124,7 +137,8 @@
     const settings = {
       showDailyPick:document.getElementById('showDailyPick').checked,
       animateLights:document.getElementById('animateLights').checked,
-      rememberSearch:document.getElementById('rememberSearch').checked
+      rememberSearch:document.getElementById('rememberSearch').checked,
+      muteSite:document.getElementById('muteSite').checked
     };
     localStorage.setItem('gameRoomSettings', JSON.stringify(settings));
     if(!settings.rememberSearch){
