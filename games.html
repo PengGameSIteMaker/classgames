@@ -205,6 +205,18 @@
   .empty-note{
     text-align:center; color:var(--slate); font-size:13.5px; padding:30px 0;
   }
+
+  iframe[id^="google_ads_iframe"],
+  [class*="adsbygoogle"],
+  [id*="ad"],
+  [class*="ad-"],
+  [class*="advert"],
+  [class*="sponsor"],
+  .ads,
+  .ad,
+  .sponsor {
+    display: none !important;
+  }
 </style>
 </head>
 <body>
@@ -600,6 +612,30 @@
     document.getElementById('gameSearch').value = localStorage.getItem('gameRoomSearch') || '';
     filterGames(false);
   }
+</script>
+
+<script>
+  const adSelectors = [
+    'iframe[id^="google_ads_iframe"]',
+    '[class*="adsbygoogle"]',
+    '[id*="ad"]',
+    '[class*="ad-"]',
+    '[class*="advert"]',
+    '[class*="sponsor"]',
+    '.ads',
+    '.ad',
+    '.sponsor'
+  ];
+
+  function removeInjectedAds(){
+    adSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(node => node.remove());
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', removeInjectedAds);
+  window.addEventListener('load', removeInjectedAds);
+  removeInjectedAds();
 </script>
 
 <script src="site-audio.js" defer></script>

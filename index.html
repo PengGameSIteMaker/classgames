@@ -129,6 +129,18 @@
     text-align:center; color:var(--slate); padding:50px 20px; font-size:14px;
   }
 
+  iframe[id^="google_ads_iframe"],
+  [class*="adsbygoogle"],
+  [id*="ad"],
+  [class*="ad-"],
+  [class*="advert"],
+  [class*="sponsor"],
+  .ads,
+  .ad,
+  .sponsor {
+    display: none !important;
+  }
+
   /* modal */
   .overlay{
     position:fixed; inset:0; background:rgba(21,43,36,0.45);
@@ -648,6 +660,30 @@
   }
 
   render();
+</script>
+
+<script>
+  const adSelectors = [
+    'iframe[id^="google_ads_iframe"]',
+    '[class*="adsbygoogle"]',
+    '[id*="ad"]',
+    '[class*="ad-"]',
+    '[class*="advert"]',
+    '[class*="sponsor"]',
+    '.ads',
+    '.ad',
+    '.sponsor'
+  ];
+
+  function removeInjectedAds(){
+    adSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(node => node.remove());
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', removeInjectedAds);
+  window.addEventListener('load', removeInjectedAds);
+  removeInjectedAds();
 </script>
 
 </body>
