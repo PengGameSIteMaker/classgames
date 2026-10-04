@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Drive Mad</title>
+<script type="text/javascript" src="Jump_Gamemonetize.js"></script>
+<meta name="description" content="Drive Mad browser game experience with full-screen support and responsive game play.">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="theme-color" content="#111827">
+<link rel="stylesheet" href="webapp/fancade.css">
+<link rel="icon" href="webapp/cover.jpg">
+<style>
+  :root {
+    --night: #10131b;
+    --panel: #1b202b;
+    --line: #333b4b;
+    --text: #f4f1e8;
+    --muted: #a9b0bf;
+    --gold: #ffc857;
+    --bg-shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: radial-gradient(circle at 50% 0%, rgba(255, 200, 87, 0.12), transparent 34rem), var(--night);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+  }
+
+  .topbar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+  }
+
+  .back-button,
+  .back-button:link,
+  .back-button:visited,
+  .back-button:active,
+  .back-button:hover,
+  .back-button:focus,
+  .back-button:focus-visible {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 15px 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(27, 32, 43, 0.92);
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  }
+
+  .back-button:hover,
+  .back-button:focus,
+  .back-button:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    background: #252c39;
+    color: var(--text);
+  }
+
+  .back-button:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  body.fullscreen-mode {
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .game-stage {
+    position: relative;
+    z-index: 1;
+    width: calc(100vw - 32px);
+    max-width: none;
+    height: calc(100vh - 32px);
+    max-height: none;
+    box-sizing: border-box;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 18px;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .game-stage::after {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    border: 2px solid var(--line);
+    border-radius: inherit;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.04);
+    content: "";
+    pointer-events: none;
+  }
+
+  #canvas_border {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: inherit;
+    background: #000;
+    overflow: hidden;
+  }
+
+  canvas.emscripten,
+  canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    background: #000;
+    pointer-events: auto;
+  }
+
+  .game-stage:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: #000;
+  }
+
+  .game-stage:fullscreen #canvas_border {
+    border: 0;
+    border-radius: 0;
+  }
+
+  .game-stage:fullscreen::after {
+    display: none;
+  }
+
+  #play_content {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #gradient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #fps-counter {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 12px;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .fullscreen-button {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    z-index: 20;
+    border: 1px solid var(--game-line);
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.9);
+    color: var(--game-muted);
+    font: 600 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35);
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    touch-action: manipulation;
+  }
+
+  .fullscreen-button:hover {
+    transform: translateY(-2px);
+    border-color: var(--game-gold);
+    background: rgba(30, 41, 59, 0.95);
+    color: var(--game-text);
+  }
+
+  .fullscreen-button:focus-visible {
+    outline: 2px solid var(--game-gold);
+    outline-offset: 3px;
+  }
+
+  body.fullscreen-mode .middle,
+  body.fullscreen-mode #progress_or_play,
+  body.fullscreen-mode .description,
+  body.fullscreen-mode #modal_parent {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .topbar {
+      top: 12px;
+      left: 12px;
+    }
+
+    .back-button {
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+
+    .game-stage {
+      width: calc(100vw - 24px);
+      max-width: none;
+      height: calc(100vh - 24px);
+      max-height: none;
+      border-radius: 12px;
+      padding: 0;
+    }
+
+    #fps-counter {
+      top: 10px;
+      right: 10px;
+    }
+
+    .fullscreen-button {
+      right: 12px;
+      bottom: 12px;
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+  }
+
+  body.fullscreen-mode .topbar,
+  body.fullscreen-mode #fps-counter {
+    display: none;
+  }
+</style>
+</head>
+<body id="body">
+  <div class="topbar">
+    <a class="back-button" href="../../games.html" aria-label="Back to Game Room">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      Back to Game Room
+    </a>
+  </div>
+
+  <main class="game-stage" id="gameStage">
+    <div id="modal_parent">
+      <div id="modal_content"><span id="modal_close_button">&times;</span>
+      <div id="store_link_modal_content" class="modal_inner"></div>
+      <div id="share_file_modal_content" class="modal_inner"></div>
+      </div>
+    </div>
+    <div id="canvas_border" class="emscripten_border" aria-label="Drive Mad game stage">
+      <div id="play_content" class="middle center">
+        <div class="edge">
+          <div class="box">
+            <div class="black"><img src="webapp/cover.jpg" class="cover" alt="Drive Mad cover art">
+            <p class="title">Drive Mad</p>
+            <p class="author">Robert Winberg</p>
+            </div>
+          </div>
+        </div>
+        <div id="progress_or_play"><progress id="progress" class="loading" value="0" max="100"></progress></div>
+        <p class="description"></p>
+      </div><canvas class="emscripten" id="canvas" tabindex="-1" aria-label="Drive Mad canvas"></canvas>
+      <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ Fullscreen</button>
+      <div id="gradient"></div>
+      <div id="webview_content"></div>
+    </div>
+  </main>
+
+  <div id="fps-counter">FPS: --</div>
+
+  <script type="text/javascript" src="webapp/source_min.js"></script>
+  <script type="text/javascript" src="webapp/index.js"></script>
+  <script>
+    const gameStage = document.getElementById('gameStage');
+    const fullscreenButton = document.getElementById('fullscreen-button');
+    const fpsCounter = document.getElementById('fps-counter');
+    const gameCanvas = document.getElementById('canvas');
+
+    function syncGameCanvasSize() {
+      const rect = gameCanvas.getBoundingClientRect();
+      const pixelRatio = window.devicePixelRatio || 1;
+      const width = Math.round(rect.width * pixelRatio);
+      const height = Math.round(rect.height * pixelRatio);
+      const changed = gameCanvas.width !== width || gameCanvas.height !== height;
+
+      if (!changed) {
+        return;
+      }
+
+      gameCanvas.width = width;
+      gameCanvas.height = height;
+
+      if (typeof Module !== 'undefined' && Module.calledRun && typeof Module.ccall === 'function') {
+        Module.ccall('update_screen_size', 'v', ['number', 'number', 'number'], [
+          width,
+          height,
+          pixelRatio
+        ]);
+      }
+    }
+
+    function sizeGameStage() {
+      if (document.fullscreenElement === gameStage) {
+        return;
+      }
+
+      const margin = window.matchMedia('(max-width: 768px)').matches ? 48 : 96;
+      const scale = Math.min(
+        Math.max(0, (window.innerWidth - margin) / window.innerWidth),
+        Math.max(0, (window.innerHeight - margin) / window.innerHeight)
+      );
+      gameStage.style.width = `${window.innerWidth * scale}px`;
+      gameStage.style.height = `${window.innerHeight * scale}px`;
+      syncGameCanvasSize();
+    }
+
+    function updateFullscreenButton() {
+      const active = document.fullscreenElement === gameStage;
+      document.body.classList.toggle('fullscreen-mode', active);
+      fullscreenButton.textContent = active ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+      fullscreenButton.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+      if (active) {
+        gameStage.style.removeProperty('width');
+        gameStage.style.removeProperty('height');
+        window.requestAnimationFrame(syncGameCanvasSize);
+      } else {
+        sizeGameStage();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (document.fullscreenElement === gameStage) {
+        document.exitFullscreen();
+      } else if (gameStage.requestFullscreen) {
+        gameStage.requestFullscreen();
+      }
+    }
+
+    if (fullscreenButton) {
+      fullscreenButton.addEventListener('click', toggleFullscreen);
+      document.addEventListener('fullscreenchange', updateFullscreenButton);
+      window.addEventListener('resize', sizeGameStage);
+      new ResizeObserver(syncGameCanvasSize).observe(gameStage);
+      sizeGameStage();
+      updateFullscreenButton();
+
+      let canvasSyncAttempts = 0;
+      const canvasSyncTimer = window.setInterval(() => {
+        canvasSyncAttempts++;
+        if (typeof Module !== 'undefined' && Module.calledRun) {
+          syncGameCanvasSize();
+          window.clearInterval(canvasSyncTimer);
+        } else if (canvasSyncAttempts >= 120) {
+          window.clearInterval(canvasSyncTimer);
+        }
+      }, 250);
+    }
+
+    let lastFrameTime = performance.now();
+    let frames = 0;
+
+    function frameLoop() {
+      const now = performance.now();
+      frames++;
+      if (now - lastFrameTime >= 1000) {
+        fpsCounter.textContent = `FPS: ${Math.round(frames / ((now - lastFrameTime) / 1000))}`;
+        frames = 0;
+        lastFrameTime = now;
+      }
+      requestAnimationFrame(frameLoop);
+    }
+
+    frameLoop();
+  </script>
+</body>
+</html>
