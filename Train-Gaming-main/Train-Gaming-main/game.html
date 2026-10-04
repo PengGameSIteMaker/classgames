@@ -1,0 +1,122 @@
+
+<style>
+  .always-on-top {
+    position: fixed; /* Stays in place during scroll */
+    top: 0;
+    left: 0;
+    width: 1520px;    /* Full viewport width */
+    height: 740px;   /* Full viewport height */
+    z-index: 9999;   /* Layers it above everything else */
+    object-fit: cover; /* Fits image without stretching */
+    pointer-events: none; /* Optional: allows clicking things behind it */
+  }
+</style>
+
+<img src="/images/tape2.png" class="always-on-top">
+
+<html>
+<head>
+	  <link rel="icon" type="image/png" href="/images/penguintrain.png">
+	<title>Game Menu</title>
+	<style>
+		.back-btn {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+			transition: background-color 0.3s;
+		}
+		.back-btn:hover {
+			background-color: #0056b3;
+		}
+		.game-menu {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 24px;
+			justify-content: center;
+			margin-top: 40px;
+		}
+		.game-btn {
+			border: none;
+			background: none;
+			cursor: pointer;
+			padding: 0;
+			transition: transform 0.2s;
+		}
+		.game-btn:hover img {
+			transform: scale(1.08);
+			box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+		}
+		.game-img {
+			width: 160px;
+			height: 160px;
+			object-fit: cover;
+			border-radius: 16px;
+			border: 2px solid #eee;
+		}
+		.game-label {
+			text-align: center;
+			margin-top: 8px;
+			font-size: 18px;
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	<div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+	<button onclick="window.location.href='index.html'" class="back-btn">Back</button>
+	<input type="text" id="searchBar" placeholder="Search games..." style="display:block;margin:20px auto 24px auto;width:320px;padding:10px;font-size:18px;border-radius:8px;border:1px solid #ccc;" onkeyup="filterGames()" />
+	<div class="game-menu" id="gameMenu">
+		<!-- Games will be loaded here -->
+	</div>
+	<script>
+		fetch('games.json')
+			.then(response => response.json())
+			.then(games => {
+				// Sort by dateAdded descending (most recent first)
+				games.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+				const gameMenu = document.getElementById('gameMenu');
+				games.forEach(game => {
+					const gameItem = document.createElement('div');
+					gameItem.className = 'game-item';
+					gameItem.innerHTML = `
+						<button class="game-btn" onclick="window.location.href='${game.path}'">
+							<img src="${game.image}" alt="${game.name}" class="game-img" />
+						</button>
+						<div class="game-label">${game.name}</div>
+					`;
+					gameMenu.appendChild(gameItem);
+				});
+			})
+			.catch(error => console.error('Error loading games:', error));
+	</script>
+	<script>
+	function filterGames() {
+		var input = document.getElementById('searchBar');
+		var filter = input.value.toLowerCase();
+		var menu = document.getElementById('gameMenu');
+		var items = menu.getElementsByClassName('game-item');
+		for (var i = 0; i < items.length; i++) {
+			var label = items[i].getElementsByClassName('game-label')[0];
+			if (label.textContent.toLowerCase().indexOf(filter) > -1) {
+				items[i].style.display = '';
+			} else {
+				items[i].style.display = 'none';
+			}
+		}
+	}
+	</script>
+	<script>
+		setTimeout(function() {
+			document.getElementById('loading').style.display = 'none';
+		}, 2000);
+	</script>
+</body>
+</html>

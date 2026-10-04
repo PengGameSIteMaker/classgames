@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <title>Cut the Rope - Full Screen</title>
+    <link rel="canonical" href="http://windyboy.freevnn.com" />
+    <meta name="description" content="Play Cut the Rope! A mysterious package has arrived, and the little monster inside has only one request… CANDY!">
+
+    <!-- Modified Viewport for scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+    <!-- Game Scripts -->
+	<script type="text/javascript" src="/js/detectmobilebrowser.js" ></script>
+    <link href="css/ctr.css?438" rel="stylesheet" type="text/css">
+    <script src="scripts/sm2.js?438" type="text/javascript"></script>
+    <script src="scripts/libraries.js?438" type="text/javascript"></script>
+    <script src="scripts/ctr.js?438" type="text/javascript"></script>
+
+    <style type="text/css">
+        /* Force game to fill the screen */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        #gameContainer {
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gameArea, canvas#c, .panel {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Keeps aspect ratio */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Center the loader in the new full-screen layout */
+        #loader-logo {
+            position: absolute;
+            left: 50% !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%);
+            margin: 0 !important;
+        }
+    </style>
+
+    <noscript>
+        <link href="css/nojavascript.css?438" rel="stylesheet" type="text/css">
+    </noscript>
+</head>
+<body class="ctrCursor">
+  <div id="lang">
+    <div id="fb-root"></div>
+
+    <style type="text/css">
+        /* Lock the body to prevent scrolling/bouncing */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Keep the game at its native internal resolution */
+        #gameContainer {
+            width: 1024px !important;
+            height: 768px !important;
+            position: relative;
+            transform-origin: center center;
+            flex-shrink: 0;
+        }
+
+        /* Fix the Menu/UI overlapping glitch */
+        .panel, #gameArea, #c, #levelCanvas {
+            width: 1024px !important;
+            height: 768px !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+        }
+
+        /* Hide the annoying horizontal scroll if any */
+        #lang { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+    </style>
+
+    <script type="text/javascript">
+        // This script calculates the perfect scale to fit your window
+        // without breaking the "click" positions.
+        function resizeGame() {
+            var container = document.getElementById('gameContainer');
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            var ratio = width / height;
+            var gameRatio = 1024 / 768;
+            var scale;
+
+            if (ratio > gameRatio) {
+                scale = height / 768;
+            } else {
+                scale = width / 1024;
+            }
+
+            container.style.transform = 'scale(' + scale + ')';
+        }
+
+        window.addEventListener('resize', resizeGame);
+        window.addEventListener('load', resizeGame);
+    </script>
+
+
+    <div id="gameContainer" >
+        <div id="game-border">
+            <div id="loader-logo"></div>
+        </div>
+        <div id="gameArea" class="hideBeforeLoad">
+            <canvas id="c"></canvas>
+            <div id="loadingPanel" class="panel"></div>
+
+            <div id="startBackground" class="panel"></div>
+            <div id="menuBackground" class="panel"></div>
+            <div id="levelBackground" class="panel">
+                <canvas id="levelCanvas"></canvas>
+                <div id="levelTape" class="levelTape"></div>
+            </div>
+            <div id="shadowPanel" class="panel">
+                <canvas id="shadowCanvas"></canvas>
+            </div>
+            <div id="menuPanel" class="panel seethrough">
+                <div class="panelContent">
+                    <div id="menuLogo" ></div>
+                    <div id="menuBtnVbox" class="fBtnVBox">
+                        <div id="playBtn" class="fBtn"><img src="" /></div>
+                        <div id="optionsBtn" class="fBtn"><img src="" /></div>
+                    </div>
+                </div>
+                <div id="miniOptionsMenu">
+                    <div id="optionSound" class="ctrPointer" ></div>
+                    <div id="optionMsg"></div>
+                </div>
+            </div>
+
+            <div id="boxPanel" class="panel seethrough">
+                <canvas id="boxCanvas"></canvas>
+                <div id="boxScore" class="hideFromMouse"><img src="" /></div>
+                <div id="boxNavBack">
+                    <div class="boxNavDisabled"></div>
+                </div>
+                <div id="boxNavForward">
+                    <div></div>
+                </div>
+                <div id="boxBack" class="bBtn"></div>
+            </div>
+
+            <div id="levelPanel" class="panel">
+                <div id="levelScore"><img src="" /></div>
+                <div id="levelBack" class="bBtn"></div>
+                <div id="levelOptions"></div>
+                <div id="levelResults">
+                    <div id="resultStatus"><img src="" /></div>
+                    <div class="starCase">
+                        <div id="resultStar1" class=""></div>
+                        <div id="resultStar2" class=""></div>
+                        <div id="resultStar3" class=""></div>
+                    </div>
+                    <div id="resultTicker">
+                        <img id="resultTickerLabel" />
+                        <img id="resultTickerValue" />
+                        <img id="resultTickerMessage" />
+                    </div>
+                    <div class="line"></div>
+                    <div id="resultScore"></div>
+                    <div class="btnCase">
+                        <div id="replayBtn" class="sBtn"><img src="" /></div>
+                        <div id="lrMenuBtn" class="sBtn"><img src="" /></div>
+                        <div id="nextBtn" class="sBtn"><img src="" /></div>
+                    </div>
+                    <div id="resultImproved"></div>
+                </div>
+            </div>
+
+            <div id="gameCompletePanel" class="panel">
+                <div id="congrats"></div>
+                <div id="finalScore"><img src="" /></div>
+                <a href="http://windyboy.freevnn.com" id="finalFunBtn" class="lBtn" target="_blank"><img src="" /><div id="funOmNom"></div></a>
+                <div id="gameCompleteBack" class="bBtn"></div>
+            </div>
+            
+            <div id="optionsPanel" class="panel">
+                <div class="fBtnVBox">
+                    <div id="optionsTitle"><img src="" /></div>
+                    <div id="soundBtn" class="mini-button ctrCursor"><div id="options-speaker"></div><div class="options-x"></div></div>
+                    <div id="musicBtn" class="mini-button ctrCursor"><div id="options-note"></div><div class="options-x"></div></div>
+                    <div id="langBtn" class="fBtn"><img src="" /><div id="flag"></div></div>
+                    <div id="resetBtn" class="fBtn"><img src="" /></div>
+                    <div id="creditsBtn" class="fBtn"><img src="" /></div>
+                    <div id="dragBtn"><img id="dragText" /><div class="options-check-disabled"></div></div>
+                    <div id="cutBtn" class="ctrCursor"><img id="cutText" /><div class="options-check"></div></div>
+                </div>
+                <div id="optionsBack" class="bBtn"></div>
+            </div>
+
+            <div id="d" class="panel ctrPointer">
+                <img id="dmsg" />
+                <div id="dframe">
+                    <div id="dpic"></div>
+                </div>
+                <div id="dshareBtn" class="fBtn"><img src="" /><div id="dfb"></div></div>
+            </div>
+            <div id="gameBtnTray">
+                <div id="gameMsg" class="allSound"></div>
+                <div id="gameSound" class="ctrPointer allSound"></div>
+                <div id="gameRestartBtn" class="ctrPointer"></div>
+                <div id="gameMenuBtn" class="ctrPointer"></div>
+            </div>
+            <div id="levelMenu">
+                <div class="fBtnVBox">
+                    <div id="continueBtn" class="fBtn"><img src="" /></div>
+                    <div id="skipBtn" class="fBtn"><img src="" /></div>
+                    <div id="selectBtn" class="fBtn"><img src="" /></div>
+                    <div id="menuBtn" class="fBtn"><img src="" /></div>
+                </div>
+            </div>
+
+            <div id="boxCutter"></div>
+            <div id="tapeRoll"></div>
+            <div id="video"></div>
+            <div id="fadeToBlack" class="panel"></div>
+        </div>  
+        <canvas id="e"></canvas>
+        
+        <div id="loaderWindow">
+            <div id="loaderBubbles">
+                <img id="loaderLogo" src="images/page/loader-logo.png" />
+                <div id="loaderCanvasHost">
+                    <canvas id="loaderCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</body>
+</html>

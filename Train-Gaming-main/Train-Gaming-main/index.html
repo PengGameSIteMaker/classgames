@@ -1,0 +1,138 @@
+<style>
+  .always-on-top {
+    position: fixed; /* Stays in place during scroll */
+    top: 0;
+    left: 0;
+    width: 1520px;    /* Full viewport width */
+    height: 730px;   /* Full viewport height */
+    z-index: 9999;   /* Layers it above everything else */
+    object-fit: cover; /* Fits image without stretching */
+    pointer-events: none; /* Optional: allows clicking things behind it */
+  }
+</style>
+
+<img src="/images/tape2.png" class="always-on-top">
+
+<html>
+<head>
+  <link rel="icon" type="image/png" href="/images/penguintrain.png">
+  <title>Train Gaming</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+  <div class="sidebar">
+    <button id="toggleSidebar">☰</button>
+    <ul>
+      <li><a href="/game.html">Games</a></li>
+      <li><a href="/news.html">News</a></li>
+      <li><a href="/about.html">About Us</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/faq.html">Settings</a></li>
+      <li><a href="/chat.html">Chat</a></li>
+      <li><a href="/Suggest.html">Suggest A Game</a></li>
+    </ul>
+  </div>
+  <div class="main">
+    <center><p class="title">Train Gaming</p></center>
+    <div class="news">
+      <h2>Latest News</h2>
+      <div class="news-container">
+        <a href="/news/news1.html" class="news-link">
+          <div class="news-card">
+            <img src="images/Controller.png" alt="Game Controller">
+            <h3>How We Add Games</h3>
+          </div>
+        </a>
+        <a href="/news/news2.html" class="news-link">
+          <div class="news-card">
+            <img src="/images/suggest.jpg" alt="How to Suggest a Game">
+            <h3>How to Suggest a Game</h3>
+          </div>
+        </a>
+        <a href="/news/news3.html" class="news-link">
+          <div class="news-card">
+            <img src="/images/list.png" alt="Games We're Adding">
+            <h3>Games Being Added List</h3>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="recent-games">
+      <h2>Recent Games</h2>
+      <div class="news-container" id="recentGamesContainer">
+        <!-- Recent games will be loaded here -->
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('toggleSidebar');
+      button.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-closed');
+        if (document.body.classList.contains('sidebar-closed')) {
+          button.style.position = 'fixed';
+          button.style.top = '10px';
+          button.style.left = '10px';
+          button.style.right = 'auto';
+        } else {
+          button.style.position = 'absolute';
+          button.style.top = '10px';
+          button.style.right = '10px';
+          button.style.left = 'auto';
+        }
+      });
+    });
+  </script>
+  <script>
+    setTimeout(function() {
+      document.getElementById('loading').style.display = 'none';
+    }, 2000);
+  </script>
+  <script>
+    // Handle image loading errors
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('.news-card img');
+      images.forEach(img => {
+        img.addEventListener('error', function() {
+          this.style.display = 'none';
+          // Optionally add a placeholder or fallback
+          const fallback = document.createElement('div');
+          fallback.style.width = '100%';
+          fallback.style.height = '150px';
+          fallback.style.backgroundColor = '#ddd';
+          fallback.style.display = 'flex';
+          fallback.style.alignItems = 'center';
+          fallback.style.justifyContent = 'center';
+          fallback.style.color = '#666';
+          fallback.textContent = 'Image not available';
+          this.parentNode.insertBefore(fallback, this);
+        });
+      });
+    });
+  </script>
+  <script>
+    fetch('games.json')
+      .then(response => response.json())
+      .then(games => {
+        // Sort by dateAdded descending
+        games.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+        const recentGames = games.slice(0, 3);
+        const container = document.getElementById('recentGamesContainer');
+        recentGames.forEach(game => {
+          const link = document.createElement('a');
+          link.href = game.path;
+          link.className = 'news-link';
+          link.innerHTML = `
+            <div class="news-card">
+              <img src="${game.image}" alt="${game.name}">
+              <h3>New Game: ${game.name}</h3>
+            </div>
+          `;
+          container.appendChild(link);
+        });
+      })
+      .catch(error => console.error('Error loading recent games:', error));
+  </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+:root {
+  --night: #10131b;
+  --panel: #1b202b;
+  --line: #333b4b;
+  --text: #f4f1e8;
+  --muted: #a9b0bf;
+  --gold: #ffc857;
+  --bg-shadow: rgba(0, 0, 0, 0.35);
+  --page-gutter: 24px;
+  --stage-gutter: clamp(8px, 2vw, 22px);
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: var(--page-gutter);
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 200, 87, 0.12), transparent 34rem), var(--night);
+  color: var(--text);
+}
+
+.topbar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 15px 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(27, 32, 43, 0.92);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  background: #252c39;
+  color: var(--text);
+}
+
+.back-button:focus-visible,
+.fullscreen-button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.game-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  padding: var(--stage-gutter);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(27, 32, 43, 0.78);
+  box-shadow: 0 24px 70px var(--bg-shadow), inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.game-shell {
+  position: relative;
+  width: min(
+    calc(100vw - var(--page-gutter) - var(--page-gutter) - var(--stage-gutter) - var(--stage-gutter) - 2px),
+    calc((100dvh - var(--page-gutter) - var(--page-gutter) - var(--stage-gutter) - var(--stage-gutter) - 2px) * 0.62)
+  );
+  aspect-ratio: 0.62;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #231f20;
+}
+
+.webgl-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #231f20;
+}
+
+.webgl-content canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.logo,
+.progress {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo {
+  width: 130px;
+  height: 130px;
+  background: url("logo.png") no-repeat center / contain;
+}
+
+.progress {
+  width: 141px;
+  height: 18px;
+  margin-top: 90px;
+}
+
+.progress .empty {
+  float: right;
+  width: 100%;
+  height: 100%;
+  background: url("TemplateData/progressEmpty.Dark.png") no-repeat right / cover;
+}
+
+.progress .full {
+  float: left;
+  width: 0;
+  height: 100%;
+  background: url("TemplateData/progressFull.Dark.png") no-repeat left / cover;
+}
+
+.loading-label {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 20%;
+  left: 0;
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.loading-label[hidden] {
+  display: none;
+}
+
+.fullscreen-button {
+  position: absolute;
+  right: clamp(14px, 2vw, 28px);
+  bottom: clamp(14px, 2vw, 28px);
+  z-index: 2;
+  padding: 10px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(27, 32, 43, 0.92);
+  color: var(--muted);
+  font: 650 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  touch-action: manipulation;
+}
+
+.fullscreen-button:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+  background: #252c39;
+  color: var(--text);
+}
+
+.game-message {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 58px;
+  left: 12px;
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+  text-shadow: 0 1px 4px #000;
+  pointer-events: none;
+}
+
+#fps-counter {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 12px;
+}
+
+.fullscreen-mode {
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+.fullscreen-mode .topbar,
+.fullscreen-mode #fps-counter {
+  display: none;
+}
+
+.game-stage:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+}
+
+.game-stage:fullscreen .game-shell {
+  width: min(100vw, calc(100dvh * 0.62));
+  max-height: 100%;
+  border-radius: 0;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --page-gutter: 12px;
+    --stage-gutter: 6px;
+  }
+
+  body {
+    padding: var(--page-gutter);
+  }
+
+  .topbar {
+    top: 12px;
+    left: 12px;
+  }
+
+  .back-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .game-stage {
+    border-radius: 12px;
+  }
+
+  .fullscreen-button {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <link rel="icon" type="image/png" href="/images/penguintrain.png">
+    <title>Suggest A Game</title>
+</head>
+<body style="background-color: #6c757d;">
+<button onclick="window.history.back()" style="position: absolute; top: 10px; left: 10px; background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: background-color 0.3s;">Back</button>
+<div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+<center><iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfmuOiIa6-HGqRXL3llgDwYs-0g2G8C6TYukiedZKhn365ABg/viewform?embedded=true" width="640" height="587" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe></center>
+<script>
+    setTimeout(function() {
+        document.getElementById('loading').style.display = 'none';
+    }, 2000);
+</script>
+</body>
+</html>

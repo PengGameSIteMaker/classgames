@@ -1,0 +1,222 @@
+<html>
+<head>
+    <link rel="icon" type="image/png" href="/images/penguintrain.png">
+  <title>Games We're Adding</title>
+  <link rel="stylesheet" href="../index.css">
+  <style>
+    .games-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .game-item {
+      background: rgba(0, 123, 255, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid rgba(0, 123, 255, 0.5);
+    }
+    .game-item.added {
+      background: rgba(40, 167, 69, 0.1);
+      border-left-color: rgba(40, 167, 69, 0.8);
+    }
+    .game-item.added::after {
+      content: " ✓";
+      color: #28a745;
+      font-weight: bold;
+    }
+    .games-coming {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+  <div class="sidebar">
+    <button id="toggleSidebar">☰</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../game.html">Games</a></li>
+      <li><a href="../chat.html">Chat</a></li>
+      <li><a href="../Suggest.html">Suggest A Game</a></li>
+    </ul>
+  </div>
+  <div class="main">
+    <center><p class="title">Games We're Adding</p></center>
+    <div class="content-section">
+      <h2>Expanding Our Collection</h2>
+      <p>We're constantly working to bring new and exciting games to Train Gaming! Here's what we've already added and what's coming next.</p>
+
+      <div class="recent-additions">
+        <h2>✓ Recently Added Games</h2>
+        <p>These games are now live on Train Gaming:</p>
+        <div class="games-list" id="addedGamesList">
+          <!-- Games will be loaded dynamically -->
+        </div>
+      </div>
+
+      <div class="coming-soon">
+        <h2>🚀 Coming Soon</h2>
+        <p>These games are in development or testing and will be added soon:</p>
+        <div class="games-coming">
+          <div class="game-item">A Difficult Game About Climbing</div>
+          <div class="game-item">Ace Attorney</div>
+          <div class="game-item">Baldis Basics</div>
+          <div class="game-item">Basketball Stars</div>
+          <div class="game-item">Big Tower Tiny Square 1 & 2</div>
+          <div class="game-item">Bloxorz</div>
+          <div class="game-item">Blumgi Slime</div>
+          <div class="game-item">Bow Masters</div>
+          <div class="game-item">Cookie Clicker</div>
+          <div class="game-item">Crossy Road</div>
+          <div class="game-item">Crazy Cattle 3D</div>
+          <div class="game-item">Cut the Rope</div>
+          <div class="game-item">Death Run 3D</div>
+          <div class="game-item">Doom Series</div>
+          <div class="game-item">Donkey Kong</div>
+          <div class="game-item">Escape Road</div>
+          <div class="game-item">Flappy Bird</div>
+          <div class="game-item">FNAF Series</div>
+          <div class="game-item">Fruit Merge</div>
+          <div class="game-item">Geometry Dash NES</div>
+          <div class="game-item">Gladihoppers</div>
+          <div class="game-item">Get Away Shoot Out</div>
+          <div class="game-item">Getting Over It</div>
+          <div class="game-item">Gun Mayhem</div>
+          <div class="game-item">Happy Wheels</div>
+          <div class="game-item">Hole IO</div>
+          <div class="game-item">Idle Breakout</div>
+          <div class="game-item">Impossible Quiz 1 & 2</div>
+          <div class="game-item">Jetpack Joyride</div>
+          <div class="game-item">Learn to Fly Series</div>
+          <div class="game-item">Line Rider</div>
+          <div class="game-item">Minesweeper</div>
+          <div class="game-item">Minecraft</div>
+          <div class="game-item">Monkey Masters</div>
+          <div class="game-item">OVO</div>
+          <div class="game-item">Paper IO 2</div>
+          <div class="game-item">Park Out</div>
+          <div class="game-item">Pokemon Games</div>
+          <div class="game-item">Recoil</div>
+          <div class="game-item">Retro Bowl</div>
+          <div class="game-item">Sausage Flip</div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h2>Stay Updated</h2>
+        <p>New games are being added regularly! Check back soon to see what's new on Train Gaming.</p>
+        <a href="../index.html" class="play-button" style="display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 15px;">Back to Home</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('toggleSidebar');
+      button.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-closed');
+        if (document.body.classList.contains('sidebar-closed')) {
+          button.style.position = 'fixed';
+          button.style.top = '10px';
+          button.style.left = '10px';
+          button.style.right = 'auto';
+        } else {
+          button.style.position = 'absolute';
+          button.style.top = '10px';
+          button.style.right = '10px';
+          button.style.left = 'auto';
+        }
+      });
+    });
+  </script>
+  <script>
+    // Map game names to their folder paths
+    const gameMap = {
+      '10 Minutes Till Dawn': '../10-Minutes-Till-Dawn-main/10-Minutes-Till-Dawn-main/index.html',
+      'Bad Piggies': '../new-bad-piggies-web-port-main/new-bad-piggies-web-port-main/index.html',
+      'Bit Life': '../bitlife-main/bitlife-main/index.html',
+      'Block Blast': '../BlockBlast-main/BlockBlast-main/index.html',
+      'Chrome Dino Game': '../one-file-games/dino.html',
+      'Drive Mad': '../drive-mad-main/drive-mad-main/index.html',
+      'Jelly Truck': '../JellyTruckUnblocked.github.io-main/JellyTruckUnblocked.github.io-main/index.html'
+    };
+
+    // Fetch and parse the games list from gamesadding.txt
+    fetch('../gamesadding.txt')
+      .then(response => response.text())
+      .then(data => {
+        const lines = data.split('\n');
+        const addedGames = [];
+        const comingGames = [];
+
+        lines.forEach(line => {
+          line = line.trim();
+          if (line) {
+            if (line.includes('(added)')) {
+              // Extract game name without the (added) marker
+              const gameName = line.replace(/\s*\(added\)\s*/i, '').trim();
+              addedGames.push(gameName);
+            } else {
+              // Games without (added) marker go to coming soon
+              comingGames.push(line);
+            }
+          }
+        });
+
+        // Populate recently added games
+        const addedGamesList = document.getElementById('addedGamesList');
+        addedGames.forEach(game => {
+          const gamePath = gameMap[game];
+          if (gamePath) {
+            // Create a link if game path exists
+            const gameLink = document.createElement('a');
+            gameLink.href = gamePath;
+            gameLink.style.textDecoration = 'none';
+            gameLink.style.color = 'inherit';
+            
+            const gameDiv = document.createElement('div');
+            gameDiv.className = 'game-item added';
+            gameDiv.textContent = game;
+            gameDiv.style.cursor = 'pointer';
+            gameDiv.style.transition = 'all 0.3s ease';
+            gameDiv.onmouseover = function() {
+              this.style.background = 'rgba(40, 167, 69, 0.3)';
+              this.style.transform = 'translateY(-2px)';
+            };
+            gameDiv.onmouseout = function() {
+              this.style.background = 'rgba(40, 167, 69, 0.1)';
+              this.style.transform = 'translateY(0)';
+            };
+            
+            gameLink.appendChild(gameDiv);
+            addedGamesList.appendChild(gameLink);
+          } else {
+            // Create non-clickable item if path not mapped
+            const gameDiv = document.createElement('div');
+            gameDiv.className = 'game-item added';
+            gameDiv.textContent = game;
+            addedGamesList.appendChild(gameDiv);
+          }
+        });
+
+        // Populate coming soon games
+        const comingGamesList = document.querySelector('.games-coming');
+        comingGamesList.innerHTML = ''; // Clear existing items
+        comingGames.forEach(game => {
+          const gameDiv = document.createElement('div');
+          gameDiv.className = 'game-item';
+          gameDiv.textContent = game;
+          comingGamesList.appendChild(gameDiv);
+        });
+      })
+      .catch(error => console.error('Error loading games list:', error));
+
+    setTimeout(function() {
+      document.getElementById('loading').style.display = 'none';
+    }, 2000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<html>
+<head>
+    <link rel="icon" type="image/png" href="/images/penguintrain.png">
+  <title>How to Suggest a Game</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+  <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+  <div class="sidebar">
+    <button id="toggleSidebar">☰</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../game.html">Games</a></li>
+      <li><a href="../chat.html">Chat</a></li>
+      <li><a href="../Suggest.html">Suggest A Game</a></li>
+    </ul>
+  </div>
+  <div class="main">
+    <center><p class="title">How to Suggest a Game</p></center>
+    <div class="content-section">
+      <h2>Help Us Expand Our Game Collection!</h2>
+      <p>Do you know of an amazing game that should be on our site? We'd love to hear about it! Suggesting a game is easy and helps us bring more fun to our community.</p>
+
+      <div class="feature">
+        <h3>How to Suggest a Game</h3>
+        <ul>
+          <li><strong>Visit the Suggest Page:</strong> Click on "Suggest A Game" in the sidebar or navigate to the Suggest page.</li>
+          <li><strong>Fill Out the Form:</strong> Provide details about the game, such as its name, description, and where we can find it.</li>
+          <li><strong>Submit Your Suggestion:</strong> Hit submit and we'll review it!</li>
+          <li><strong>Stay Tuned:</strong> If your suggestion is approved, it might appear on our site soon.</li>
+        </ul>
+      </div>
+
+      <div class="play-section">
+        <h2>Ready to Suggest?</h2>
+        <p>Head over to the suggestion form and let us know what game you'd like to see!</p>
+        <a href="../Suggest.html" class="play-button">Suggest a Game</a>
+      </div>
+
+      <div class="related-games">
+        <h2>Featured Games</h2>
+        <p>While you're here, check out some of our popular games:</p>
+        <div class="game-grid" id="relatedGames">
+          <!-- Related games will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('toggleSidebar');
+      button.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-closed');
+        if (document.body.classList.contains('sidebar-closed')) {
+          button.style.position = 'fixed';
+          button.style.top = '10px';
+          button.style.left = '10px';
+          button.style.right = 'auto';
+        } else {
+          button.style.position = 'absolute';
+          button.style.top = '10px';
+          button.style.right = '10px';
+          button.style.left = 'auto';
+        }
+      });
+    });
+  </script>
+  <script>
+    setTimeout(function() {
+      document.getElementById('loading').style.display = 'none';
+    }, 2000);
+  </script>
+  <script>
+    // Fetch and display the newest games
+    fetch('../games.json')
+      .then(response => response.json())
+      .then(games => {
+        // Sort by dateAdded descending
+        games.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+        // Take the top 2 newest
+        const newestGames = games.slice(0, 2);
+        
+        const relatedGamesContainer = document.getElementById('relatedGames');
+        newestGames.forEach(game => {
+          const gameCard = document.createElement('div');
+          gameCard.className = 'game-card';
+          const adjustedPath = '../' + game.path.slice(1);
+          const adjustedImage = '../' + game.image.slice(1);
+          const description = 'Enjoy playing ' + game.name + '!';
+          gameCard.innerHTML = `
+            <a href="${adjustedPath}" class="game-link">
+              <img src="${adjustedImage}" alt="${game.name}">
+              <h4>${game.name}</h4>
+              <p>${description}</p>
+            </a>
+          `;
+          relatedGamesContainer.appendChild(gameCard);
+        });
+      })
+      .catch(error => console.error('Error loading games:', error));
+  </script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12131a">
+  <title>Community Chat | Pengu Assist</title>
+  <link rel="icon" type="image/png" href="/images/penguintrain.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #12131a;
+      --surface: #1c1e28;
+      --surface-raised: #222531;
+      --line: #30323f;
+      --text: #f2efe6;
+      --muted: #a1a5b6;
+      --amber: #ffc857;
+      --cyan: #4cc9f0;
+      --danger: #ff8a80;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(ellipse 850px 460px at 50% -10%, rgb(255 200 87 / 8%), transparent 65%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 76px;
+      padding: 16px max(24px, calc((100vw - 1120px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgb(28 30 40 / 88%);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+    }
+
+    .back-link svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .settings-link {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      place-items: center;
+      margin-left: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .settings-link svg {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .settings-link:hover {
+      color: var(--text);
+      border-color: var(--amber);
+      background: var(--surface-raised);
+    }
+
+    .back-link:focus-visible,
+    .settings-link:focus-visible,
+    .retry-button:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 3px;
+    }
+
+    main {
+      width: min(920px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: clamp(36px, 7vh, 72px) 0 64px;
+    }
+
+    .page-heading {
+      margin: 0 auto 26px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Baloo 2", "Space Grotesk", sans-serif;
+      font-size: clamp(34px, 7vw, 50px);
+      font-weight: 700;
+      line-height: 1.08;
+    }
+
+    .intro {
+      max-width: 530px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .chat-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: 0 20px 55px rgb(0 0 0 / 25%), inset 0 1px rgb(255 255 255 / 3%);
+    }
+
+    .chat-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(110deg, rgb(76 201 240 / 6%), transparent 62%);
+    }
+
+    .chat-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid rgb(76 201 240 / 25%);
+      border-radius: 11px;
+      background: rgb(76 201 240 / 10%);
+      color: var(--cyan);
+    }
+
+    .chat-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .chat-card-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .chat-card-subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chat-content {
+      min-height: 320px;
+      padding: clamp(16px, 4vw, 30px);
+    }
+
+    #disqus_thread {
+      min-height: 240px;
+    }
+
+    .loading-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      min-height: 180px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .loading-state[hidden] {
+      display: none;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      border: 2px solid var(--line);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 800ms linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-state {
+      display: none;
+      margin: 0 auto;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .error-state.visible {
+      display: block;
+    }
+
+    .retry-button {
+      margin-top: 12px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-raised);
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .retry-button:hover {
+      border-color: var(--amber);
+    }
+
+    .site-footer {
+      padding: 0 20px 26px;
+      color: #777c8e;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .site-header {
+        min-height: 64px;
+        padding: 12px 16px;
+      }
+
+      main {
+        width: min(100% - 24px, 920px);
+        padding-top: 38px;
+      }
+
+      .chat-card {
+        border-radius: 12px;
+      }
+
+      .chat-card-header {
+        padding: 15px 16px;
+      }
+
+      .chat-content {
+        min-height: 280px;
+        padding: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="games.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      Back to Game Room
+    </a>
+    <a class="settings-link" href="settings.html" aria-label="Settings" title="Settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h4l.6 2a7 7 0 0 1 1.5.9l2-.6 2 3.4-1.4 1.5v1.6l1.4 1.5-2 3.4-2-.6a7 7 0 0 1-1.5.9l-.6 2h-4l-.6-2a7 7 0 0 1-1.5-.9l-2 .6-2-3.4 1.4-1.5v-1.6L3.9 9.7l2-3.4 2 .6a7 7 0 0 1 1.5-.9z"/><circle cx="12" cy="12" r="3"/></svg>
+    </a>
+  </header>
+
+  <main>
+    <section class="page-heading" aria-labelledby="pageTitle">
+      <p class="eyebrow">Pengu Assist Community</p>
+      <h1 id="pageTitle">Community Chat</h1>
+      <p class="intro">Talk with other players, share tips, and join the conversation.</p>
+    </section>
+
+    <section class="chat-card" aria-label="Community discussion">
+      <div class="chat-card-header">
+        <span class="chat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg>
+        </span>
+        <div>
+          <h2 class="chat-card-title">The conversation</h2>
+          <p class="chat-card-subtitle">Keep it friendly and respectful.</p>
+        </div>
+      </div>
+      <div class="chat-content">
+        <div class="loading-state" id="loading" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>Loading the conversation…</span>
+        </div>
+        <div class="error-state" id="loadError" role="alert">
+          Comments are taking longer than expected to load.
+          <br>
+          <button class="retry-button" type="button" onclick="window.location.reload()">Try again</button>
+        </div>
+        <div id="disqus_thread"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">Community comments are provided by Disqus.</footer>
+
+  <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  <script>
+    const loading = document.getElementById('loading');
+    const loadError = document.getElementById('loadError');
+
+    function showCommentsError() {
+      loading.hidden = true;
+      loadError.classList.add('visible');
+    }
+
+    const loadingTimeout = window.setTimeout(showCommentsError, 20000);
+
+    var disqus_config = function () {
+      this.page.identifier = 'pengu-assist-community-chat';
+      this.callbacks = this.callbacks || {};
+      this.callbacks.onReady = this.callbacks.onReady || [];
+      this.callbacks.onReady.push(function () {
+        window.clearTimeout(loadingTimeout);
+        loading.hidden = true;
+        loadError.classList.remove('visible');
+      });
+    };
+
+    (function () {
+      const script = document.createElement('script');
+      script.src = 'https://pengu-1.disqus.com/embed.js';
+      script.setAttribute('data-timestamp', String(Date.now()));
+      script.onerror = showCommentsError;
+      (document.head || document.body).appendChild(script);
+    })();
+  </script>
+  <script id="dsq-count-scr" src="//pengu-1.disqus.com/count.js" async></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<html>
+<head>
+    <link rel="icon" type="image/png" href="/images/penguintrain.png">
+  <title>Adding Games to Train Gaming</title>
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+  <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: white; background-color: rgba(0, 123, 255, 0.8); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 1000;">Loading...</div>
+  <div class="sidebar">
+    <button id="toggleSidebar">☰</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../game.html">Games</a></li>
+      <li><a href="../chat.html">Chat</a></li>
+      <li><a href="../Suggest.html">Suggest A Game</a></li>
+    </ul>
+  </div>
+  <div class="main">
+    <center><p class="title">Adding Games to Train Gaming</p></center>
+    <div class="content-section">
+      <h2>How We Add New Games</h2>
+      <p>At Train Gaming, we're constantly expanding our collection of games to provide you with the best gaming experience. Here's how we add new games to our platform:</p>
+
+      <div class="step">
+        <h3>Step 1: Game Discovery</h3>
+        <p>We search for high-quality, engaging games from various sources including indie developers, popular game portals, and user suggestions.</p>
+      </div>
+
+      <div class="step">
+        <h3>Step 2: Quality Assessment</h3>
+        <p>Each game undergoes a thorough review process to ensure it meets our standards for gameplay, performance, and user experience.</p>
+      </div>
+
+      <div class="step">
+        <h3>Step 3: Integration</h3>
+        <p>Once approved, games are integrated into our platform with proper loading mechanisms, analytics, and cross-platform compatibility.</p>
+      </div>
+
+      <div class="step">
+        <h3>Step 4: Testing & Optimization</h3>
+        <p>We perform extensive testing across different devices and browsers to ensure smooth gameplay for all users.</p>
+      </div>
+
+      <div class="step">
+        <h3>Step 5: Launch</h3>
+        <p>New games are launched with announcements and featured in our news section to keep our community informed.</p>
+      </div>
+
+      <div class="recent-additions">
+        <h2>Recently Added Games</h2>
+        <div class="game-grid" id="gameGrid">
+          <!-- Games will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="suggest-section">
+        <h2>Want to Suggest a Game?</h2>
+        <p>If you know of a great game that should be on Train Gaming, we'd love to hear about it!</p>
+        <a href="../Suggest.html" class="suggest-button">Suggest a Game</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const button = document.getElementById('toggleSidebar');
+      button.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-closed');
+        if (document.body.classList.contains('sidebar-closed')) {
+          button.style.position = 'fixed';
+          button.style.top = '10px';
+          button.style.left = '10px';
+          button.style.right = 'auto';
+        } else {
+          button.style.position = 'absolute';
+          button.style.top = '10px';
+          button.style.right = '10px';
+          button.style.left = 'auto';
+        }
+      });
+    });
+  </script>
+  <script>
+    setTimeout(function() {
+      document.getElementById('loading').style.display = 'none';
+    }, 2000);
+  </script>
+  <script>
+    // Game data - add new games here to auto-populate
+    const games = [
+      {
+        name: "Level Devil",
+        image: "../images/level-devil.avif",
+        description: "A challenging platformer with devilish difficulty levels.",
+        path: "../level-devil-main/index.html"
+      },
+      {
+        name: "Snow Rider 3D",
+        image: "../images/snowrider3d.png",
+        description: "Experience thrilling snowboarding adventures in 3D.",
+        path: "../Snow-Rider3D-main/index.html"
+      }
+      // Add new games here in this format:
+      // {
+      //   name: "Game Name",
+      //   image: "../images/game-image.png",
+      //   description: "Game description here.",
+      //   path: "../game-folder/index.html"
+      // }
+    ];
+
+    // Function to populate the game grid
+    function populateGameGrid() {
+      const gameGrid = document.getElementById('gameGrid');
+      let html = '';
+
+      games.forEach(game => {
+        html += `
+          <a href="${game.path}" class="game-link">
+            <div class="game-item">
+              <img src="${game.image}" alt="${game.name}" onerror="this.style.display='none'">
+              <h4>${game.name}</h4>
+              <p>${game.description}</p>
+            </div>
+          </a>
+        `;
+      });
+
+      gameGrid.innerHTML = html;
+    }
+
+    // Populate games when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      populateGameGrid();
+    });
+  </script>
+</body>
+</html>
