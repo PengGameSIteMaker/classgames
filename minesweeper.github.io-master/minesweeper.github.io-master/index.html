@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10131b">
+  <meta name="description" content="Play classic Minesweeper in your browser.">
+  <title>Minesweeper | Class Games</title>
+  <style>
+    :root {
+      --night: #10131b;
+      --panel: #1b202b;
+      --line: #333b4b;
+      --text: #f4f1e8;
+      --muted: #a9b0bf;
+      --gold: #ffc857;
+      --frame-padding: clamp(8px, 2vw, 22px);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 76px 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 200, 87, 0.12), transparent 34rem), var(--night);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+
+    .back-button,
+    .back-button:link,
+    .back-button:visited {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 15px 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(27, 32, 43, 0.92);
+      color: var(--muted);
+      font: 650 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .back-button:hover,
+    .back-button:active {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      background: #252c39;
+      color: var(--text);
+    }
+
+    .back-button:focus-visible,
+    .fullscreen-button:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    .game-stage {
+      position: relative;
+      width: min(560px, calc(100vw - 40px));
+      height: 496px;
+      flex: 0 0 auto;
+      padding: var(--frame-padding);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(27, 32, 43, 0.78);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+    }
+
+    .game-shell {
+      position: absolute;
+      top: var(--frame-padding);
+      left: 50%;
+      width: 504px;
+      height: 412px;
+      transform: translateX(-50%) scale(var(--game-scale, 1));
+      transform-origin: top center;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      background: #000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .minesweeper-game,
+    .minesweeper-controller {
+      width: 504px;
+      margin: 0;
+    }
+
+    .minesweeper-controller > [data-reactroot] {
+      width: 300px !important;
+    }
+
+    .minesweeper-controller .restart-control {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background-image: none !important;
+      font: 22px/21px system-ui, sans-serif;
+    }
+
+    .minesweeper-controller .restart-control::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      content: "↻";
+      line-height: 1;
+      transform: translate(-50%, -55%);
+    }
+
+    .minesweeper-game {
+      height: 337px;
+    }
+
+    .minesweeper-controller {
+      height: 59px;
+    }
+
+    .fullscreen-button {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      z-index: 2;
+      display: flex;
+      width: 44px;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(27, 32, 43, 0.96);
+      color: var(--muted);
+      font-size: 0;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .fullscreen-button::after {
+      content: "⛶";
+      font: 22px/1 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .fullscreen-button:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      background: #252c39;
+      color: var(--text);
+    }
+
+    #game-status {
+      position: absolute;
+      z-index: 3;
+      top: 10px;
+      left: 50%;
+      max-width: calc(100% - 24px);
+      transform: translateX(-50%);
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(16, 19, 27, 0.96);
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    #game-status:empty {
+      display: none;
+    }
+
+    #fps-counter {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .game-stage:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: #000;
+    }
+
+    .game-stage:fullscreen .game-shell {
+      top: 50%;
+      transform: translate(-50%, -50%) scale(var(--game-scale, 1));
+    }
+
+    .game-stage:fullscreen .game-shell .fullscreen-button {
+      right: 14px;
+      bottom: 14px;
+    }
+
+    body.fullscreen-mode {
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body.fullscreen-mode .topbar,
+    body.fullscreen-mode #fps-counter {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --frame-padding: 8px;
+      }
+
+      body {
+        min-height: 100svh;
+        padding: 68px 12px 12px;
+      }
+
+      .topbar {
+        top: 12px;
+        left: 12px;
+      }
+
+      .back-button,
+      .back-button:link,
+      .back-button:visited {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+
+      .game-stage {
+        width: calc(100vw - 24px);
+        border-radius: 12px;
+      }
+
+      .game-shell {
+        border-radius: 7px;
+      }
+
+      .fullscreen-button {
+        right: 8px;
+        bottom: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .back-button,
+      .fullscreen-button {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="back-button" href="../../games.html" aria-label="Back to Game Room">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5"/>
+        <path d="m12 19-7-7 7-7"/>
+      </svg>
+      Back to Game Room
+    </a>
+  </div>
+
+  <main class="game-stage" id="game-stage" aria-label="Minesweeper game">
+    <div class="game-shell" id="game-shell">
+      <div class="minesweeper-game" data-preset="expert" data-name="game1"></div>
+      <div class="minesweeper-controller" data-name="game1"></div>
+      <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ Fullscreen</button>
+    </div>
+    <p id="game-status" role="status" aria-live="polite"></p>
+  </main>
+
+  <div id="fps-counter" aria-label="Frames per second">FPS: --</div>
+  <script src="a70de4b14c0109772a9dc7a4d43a2657210cc7d1.js"></script>
+  <script>
+    const gameStage = document.getElementById("game-stage");
+    const gameShell = document.getElementById("game-shell");
+    const fullscreenButton = document.getElementById("fullscreen-button");
+    const gameStatus = document.getElementById("game-status");
+    const fpsCounter = document.getElementById("fps-counter");
+    const restartButton = document.querySelector(".minesweeper-controller button");
+
+    if (!restartButton || !window.minesweeperGames?.game1) {
+      throw new Error("Minesweeper restart control could not be initialized.");
+    }
+
+    restartButton.classList.add("restart-control");
+    restartButton.setAttribute("aria-label", "Restart game");
+    restartButton.title = "Restart game";
+    restartButton.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.minesweeperGames.game1.reset();
+    }, true);
+
+    function fitGame() {
+      const stageStyle = getComputedStyle(gameStage);
+      const horizontalPadding = parseFloat(stageStyle.paddingLeft) + parseFloat(stageStyle.paddingRight);
+      const availableWidth = gameStage.clientWidth - horizontalPadding;
+      const availableHeight = document.fullscreenElement === gameStage
+        ? gameStage.clientHeight
+        : Number.POSITIVE_INFINITY;
+      const scale = Math.min(
+        1,
+        Math.max(0.1, availableWidth / gameShell.offsetWidth),
+        availableHeight / gameShell.offsetHeight
+      );
+      gameStage.style.setProperty("--game-scale", String(scale));
+
+      if (document.fullscreenElement !== gameStage) {
+        const frameHeight = parseFloat(stageStyle.paddingTop) + parseFloat(stageStyle.paddingBottom)
+          + parseFloat(stageStyle.borderTopWidth) + parseFloat(stageStyle.borderBottomWidth);
+        gameStage.style.height = `${gameShell.offsetHeight * scale + frameHeight}px`;
+      }
+    }
+
+    const resizeObserver = new ResizeObserver(fitGame);
+    resizeObserver.observe(gameStage);
+    window.addEventListener("resize", fitGame);
+    fitGame();
+
+    async function toggleFullscreen() {
+      gameStatus.textContent = "";
+
+      try {
+        if (document.fullscreenElement === gameStage) {
+          await document.exitFullscreen();
+          return;
+        }
+
+        if (!gameStage.requestFullscreen) {
+          gameStatus.textContent = "Fullscreen is not supported by this browser.";
+          return;
+        }
+
+        await gameStage.requestFullscreen();
+      } catch (error) {
+        console.error("Unable to change fullscreen mode.", error);
+        gameStatus.textContent = "Unable to change fullscreen mode. Check your browser permissions and try again.";
+      }
+    }
+
+    fullscreenButton.addEventListener("click", toggleFullscreen);
+    document.addEventListener("fullscreenchange", () => {
+      const isFullscreen = document.fullscreenElement === gameStage;
+      document.body.classList.toggle("fullscreen-mode", isFullscreen);
+      fullscreenButton.setAttribute("aria-label", isFullscreen ? "Exit fullscreen" : "Enter fullscreen");
+      fullscreenButton.textContent = isFullscreen ? "⛶ Exit Fullscreen" : "⛶ Fullscreen";
+      fitGame();
+    });
+
+    let lastFrameTime = performance.now();
+    let frames = 0;
+
+    function updateFrameRate() {
+      const now = performance.now();
+      frames += 1;
+
+      if (now - lastFrameTime >= 1000) {
+        fpsCounter.textContent = `FPS: ${Math.round(frames / ((now - lastFrameTime) / 1000))}`;
+        frames = 0;
+        lastFrameTime = now;
+      }
+
+      requestAnimationFrame(updateFrameRate);
+    }
+
+    requestAnimationFrame(updateFrameRate);
+  </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Stacktris | Class Games</title>
+	<meta name="description" content="Play Stacktris, a fast-paced block-stacking game, right in your browser.">
+	<meta name="google" content="notranslate">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="theme-color" content="#10131b">
+	<link rel="stylesheet" href="webapp/fancade.css">
+	<link rel="icon" href="webapp/favicon.ico">
+	<script src="patch/poki-sdk.js"></script>
+	<meta name="robots" content="noindex, nofollow">
+	<style>
+		:root {
+			color-scheme: dark;
+			--night: #10131b;
+			--panel: #1b202b;
+			--line: #333b4b;
+			--text: #f4f1e8;
+			--muted: #a9b0bf;
+			--gold: #ffc857;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+		}
+
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 76px 20px 20px;
+			background: radial-gradient(circle at 50% 0%, rgba(255, 200, 87, 0.12), transparent 34rem), var(--night);
+			color: var(--text);
+			overflow: hidden;
+			touch-action: manipulation;
+		}
+
+		.topbar {
+			position: fixed;
+			top: 20px;
+			left: 20px;
+			z-index: 30;
+			display: flex;
+		}
+
+		.back-button,
+		.back-button:link,
+		.back-button:visited {
+			display: inline-flex;
+			align-items: center;
+			gap: 9px;
+			padding: 10px 15px 10px 12px;
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			background: rgba(27, 32, 43, 0.92);
+			color: var(--muted);
+			font: 650 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			text-decoration: none;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+			transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+		}
+
+		.back-button:hover,
+		.back-button:active {
+			transform: translateY(-2px);
+			border-color: var(--gold);
+			background: #252c39;
+			color: var(--text);
+		}
+
+		.back-button:focus-visible,
+		.fullscreen-button:focus-visible {
+			outline: 2px solid var(--gold);
+			outline-offset: 3px;
+		}
+
+		#game-stage {
+			position: relative;
+			width: min(1080px, calc(100vw - 40px), calc((100vh - 140px) * 4 / 3 + 44px));
+			padding: clamp(8px, 2vw, 22px);
+			border: 1px solid var(--line);
+			border-radius: 18px;
+			background: rgba(27, 32, 43, 0.78);
+			box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.04);
+		}
+
+		.game-shell {
+			position: relative;
+			width: 100%;
+			aspect-ratio: 4 / 3;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			border-radius: 10px;
+			background: #000;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+			overflow: hidden;
+		}
+
+		#canvas_border {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			background: #000;
+		}
+
+		#canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.fullscreen-button {
+			position: absolute;
+			right: 14px;
+			bottom: 14px;
+			z-index: 20;
+			padding: 10px 13px;
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			background: rgba(27, 32, 43, 0.92);
+			color: var(--muted);
+			font: 650 14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			cursor: pointer;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+			transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+		}
+
+		.fullscreen-button:hover {
+			transform: translateY(-2px);
+			border-color: var(--gold);
+			background: #252c39;
+			color: var(--text);
+		}
+
+		#fps-counter {
+			position: fixed;
+			top: 10px;
+			right: 10px;
+			z-index: 30;
+			padding: 5px 8px;
+			border-radius: 5px;
+			background: rgba(0, 0, 0, 0.5);
+			color: #fff;
+			font: 12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		}
+
+		#game-status {
+			position: absolute;
+			z-index: 21;
+			top: 12px;
+			left: 50%;
+			max-width: min(90vw, 36rem);
+			transform: translateX(-50%);
+			padding: 8px 12px;
+			border-radius: 8px;
+			background: rgba(16, 19, 27, 0.92);
+			color: #fff;
+			font: 14px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			text-align: center;
+		}
+
+		#game-status:empty {
+			display: none;
+		}
+
+		#game-stage:fullscreen {
+			width: 100vw;
+			height: 100vh;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: #000;
+		}
+
+		#game-stage:fullscreen .game-shell {
+			width: 100%;
+			height: 100%;
+			aspect-ratio: auto;
+			border: 0;
+			border-radius: 0;
+		}
+
+		body.fullscreen-mode .topbar,
+		body.fullscreen-mode #fps-counter {
+			display: none;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 64px 12px 12px;
+			}
+
+			.topbar {
+				top: 12px;
+				left: 12px;
+			}
+
+			.back-button,
+			.back-button:link,
+			.back-button:visited {
+				font-size: 12px;
+				padding: 8px 12px;
+			}
+
+			#game-stage {
+				width: min(calc(100vw - 24px), calc((100vh - 88px) * 4 / 3 + 12px));
+				padding: 6px;
+				border-radius: 12px;
+			}
+
+			.game-shell {
+				border-radius: 7px;
+			}
+
+			.fullscreen-button {
+				right: 10px;
+				bottom: 10px;
+				padding: 9px 11px;
+				font-size: 13px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.back-button,
+			.fullscreen-button {
+				transition: none;
+			}
+		}
+	</style>
+</head>
+
+<body id="body">
+	<div id="modal_parent">
+		<div id="modal_content"><span id="modal_close_button">&times;</span>
+			<div id="store_link_modal_content" class="modal_inner"></div>
+			<div id="share_file_modal_content" class="modal_inner"></div>
+		</div>
+	</div>
+	<div class="topbar">
+		<a class="back-button" href="../../games.html" aria-label="Back to Game Room">
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<path d="M19 12H5"/>
+				<path d="m12 19-7-7 7-7"/>
+			</svg>
+			Back to Game Room
+		</a>
+	</div>
+	<main id="game-stage" aria-label="Stacktris game">
+		<div class="game-shell">
+			<div id="canvas_border" class="emscripten_border">
+				<div id="play_content" class="middle center">
+					<div class="edge">
+						<div class="box">
+							<div class="black"><img src="webapp/cover.jpg" class="cover" alt="Stacktris game artwork">
+								<p class="title">Stacktris</p>
+								<p class="author">Robert Winberg</p>
+							</div>
+						</div>
+					</div>
+					<div id="progress_or_play"><progress id="progress" class="loading" value="0" max="100" aria-label="Loading Stacktris"></progress></div>
+					<p class="description"></p>
+				</div><canvas class="emscripten" id="canvas" tabindex="0" aria-label="Stacktris game area"></canvas>
+				<div id="gradient"></div>
+				<div id="webview_content"></div>
+			</div>
+		</div>
+		<button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶ Fullscreen</button>
+		<p id="game-status" role="status" aria-live="polite"></p>
+	</main>
+	<div id="fps-counter" aria-label="Frames per second">FPS: --</div>
+	<script type="text/javascript" src="webapp/source_min.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="webapp/index.js" crossorigin="anonymous"></script>
+	<script>
+		const gameStage = document.getElementById("game-stage");
+		const fullscreenButton = document.getElementById("fullscreen-button");
+		const gameStatus = document.getElementById("game-status");
+		const fpsCounter = document.getElementById("fps-counter");
+
+		async function toggleFullscreen() {
+			gameStatus.textContent = "";
+
+			try {
+				if (document.fullscreenElement === gameStage) {
+					await document.exitFullscreen();
+					return;
+				}
+
+				if (!gameStage.requestFullscreen) {
+					gameStatus.textContent = "Fullscreen is not supported by this browser.";
+					return;
+				}
+
+				await gameStage.requestFullscreen();
+			} catch (error) {
+				console.error("Unable to change fullscreen mode.", error);
+				gameStatus.textContent = "Unable to change fullscreen mode. Check your browser permissions and try again.";
+			}
+		}
+
+		fullscreenButton.addEventListener("click", toggleFullscreen);
+		document.addEventListener("fullscreenchange", () => {
+			const isFullscreen = document.fullscreenElement === gameStage;
+			document.body.classList.toggle("fullscreen-mode", isFullscreen);
+			fullscreenButton.setAttribute("aria-label", isFullscreen ? "Exit fullscreen" : "Enter fullscreen");
+			fullscreenButton.textContent = isFullscreen ? "⛶ Exit Fullscreen" : "⛶ Fullscreen";
+		});
+
+		let lastFrameTime = performance.now();
+		let frames = 0;
+
+		function updateFrameRate() {
+			const now = performance.now();
+			frames += 1;
+
+			if (now - lastFrameTime >= 1000) {
+				fpsCounter.textContent = `FPS: ${Math.round(frames / ((now - lastFrameTime) / 1000))}`;
+				frames = 0;
+				lastFrameTime = now;
+			}
+
+			requestAnimationFrame(updateFrameRate);
+		}
+
+		requestAnimationFrame(updateFrameRate);
+	</script>
+</body>
+
+</html>
