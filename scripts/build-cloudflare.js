@@ -6,6 +6,7 @@ const output = path.join(root, 'dist');
 const excludedDirectories = new Set([
   '.git',
   '.github',
+  '.wrangler',
   'node_modules',
   'dist',
 ]);

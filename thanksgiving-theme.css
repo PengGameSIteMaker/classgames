@@ -64,15 +64,18 @@
 
 :root[data-season="thanksgiving"] body{
   background:
-    radial-gradient(circle at 12% 18%, rgba(224,155,61,.10) 0 2px, transparent 3px),
-    radial-gradient(circle at 82% 28%, rgba(167,75,48,.09) 0 2px, transparent 3px),
-    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(224,155,61,.16), transparent 60%),
-    var(--paper, var(--bg));
-  background-size:40px 40px, 54px 54px, auto, auto;
+    radial-gradient(circle at 12% 18%, rgba(224,155,61,.14) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 28%, rgba(167,75,48,.12) 0 2px, transparent 3px),
+    radial-gradient(ellipse 900px 520px at 50% -12%, rgba(224,155,61,.20), transparent 64%),
+    linear-gradient(145deg, rgba(255,248,226,.025), transparent 40%),
+    var(--bg);
+  background-size:40px 40px, 54px 54px, auto, auto, auto;
 }
 
 :root[data-season="thanksgiving"] header{
-  border-bottom-color:rgba(224,155,61,.35);
+  border-bottom-color:rgba(224,155,61,.45);
+  background:linear-gradient(180deg, rgba(74,36,24,.32), rgba(74,36,24,.08));
+  box-shadow:0 8px 24px rgba(74,36,24,.10);
 }
 
 :root[data-season="thanksgiving"] header a,
@@ -100,6 +103,104 @@
 :root[data-season="thanksgiving"] .row,
 :root[data-season="thanksgiving"] .modal{
   border-radius:14px;
+}
+
+:root[data-season="thanksgiving"] main{
+  position:relative;
+}
+
+:root[data-season="thanksgiving"] .marquee{
+  position:relative;
+  padding-top:44px;
+}
+
+:root[data-season="thanksgiving"] .marquee h1{
+  font-family:'Source Serif 4','Baloo 2',Georgia,serif;
+  text-shadow:0 3px 18px rgba(224,155,61,.12);
+}
+
+:root[data-season="thanksgiving"] .bulb-row{
+  gap:11px;
+  margin-top:14px;
+}
+
+:root[data-season="thanksgiving"] .bulb{
+  width:9px;
+  height:9px;
+  border:1px solid rgba(255,243,214,.55);
+}
+
+:root[data-season="thanksgiving"] .search-wrap input{
+  border-width:1px;
+  box-shadow:0 8px 24px rgba(74,36,24,.08);
+}
+
+:root[data-season="thanksgiving"] .daily-pick{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(224,155,61,.72);
+  border-radius:18px;
+  background:
+    linear-gradient(135deg, rgba(224,155,61,.10), transparent 48%),
+    var(--surface);
+  box-shadow:0 12px 32px rgba(74,36,24,.18), inset 0 0 0 1px rgba(255,243,214,.06);
+}
+
+:root[data-season="thanksgiving"] .daily-pick::after{
+  content:'';
+  position:absolute;
+  right:-28px;
+  bottom:-38px;
+  width:90px;
+  height:90px;
+  border-radius:70% 30% 65% 35%;
+  background:rgba(166,79,57,.10);
+  transform:rotate(24deg);
+  pointer-events:none;
+}
+
+:root[data-season="thanksgiving"] .daily-pick a.play-btn{
+  border-radius:999px;
+  padding-inline:18px;
+  box-shadow:0 7px 18px rgba(224,155,61,.20);
+}
+
+:root[data-season="thanksgiving"] .cabinet-row{
+  gap:38px 28px;
+}
+
+:root[data-season="thanksgiving"] .cabinet .screen{
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(224,155,61,.08), transparent 48%),
+    var(--surface);
+  box-shadow:0 10px 24px rgba(74,36,24,.14);
+}
+
+:root[data-season="thanksgiving"] .cabinet:hover .screen{
+  transform:translateY(-5px) rotate(-1deg);
+  box-shadow:0 14px 30px rgba(74,36,24,.22), 0 0 0 1px rgba(224,155,61,.55);
+}
+
+:root[data-season="thanksgiving"] .nameplate{
+  color:var(--cream);
+  font-family:'Source Serif 4',Georgia,serif;
+  font-size:12px;
+  font-weight:600;
+  text-transform:none;
+  letter-spacing:.02em;
+  text-align:center;
+}
+
+:root[data-season="thanksgiving"] .favorite-btn{
+  border-color:rgba(224,155,61,.55);
+  background:rgba(74,36,24,.82);
+}
+
+:root[data-season="thanksgiving"] .today-badge{
+  border-radius:999px;
+  text-transform:uppercase;
+  box-shadow:0 3px 10px rgba(74,36,24,.30);
 }
 
 :root[data-season="thanksgiving"] .nameplate,
@@ -140,20 +241,60 @@
   align-items:center;
   justify-content:center;
   gap:clamp(10px, 2vw, 18px);
-  min-height:clamp(82px, 9vw, 112px);
+  min-height:clamp(88px, 9vw, 116px);
   padding:16px 24px;
   background:
     linear-gradient(90deg, rgba(74,36,24,.18), transparent 18%, transparent 82%, rgba(74,36,24,.18)),
     #E09B3D;
   color:#3A2418;
-  font-family:'Space Grotesk',system-ui,sans-serif;
+  font-family:'Source Serif 4',Georgia,serif;
   font-size:clamp(28px, 5vw, 54px);
-  font-weight:700;
-  letter-spacing:.08em;
+  font-weight:600;
+  letter-spacing:.04em;
   text-align:center;
   text-transform:uppercase;
   border-bottom:4px solid #A64F39;
   box-shadow:0 5px 18px rgba(74,36,24,.18);
+}
+
+:root[data-season="thanksgiving"] .thanksgiving-banner{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(255,243,214,.20) 0 2px, transparent 3px),
+    radial-gradient(circle at 88% 35%, rgba(74,36,24,.12) 0 3px, transparent 4px),
+    linear-gradient(115deg, #C87532 0%, #E09B3D 46%, #F0B85A 70%, #B9652D 100%);
+  background-size:34px 34px, 48px 48px, auto;
+  text-shadow:0 2px 0 rgba(255,243,214,.28);
+  box-shadow:0 9px 28px rgba(74,36,24,.22), inset 0 -1px rgba(255,243,214,.18);
+}
+
+:root[data-season="thanksgiving"] .thanksgiving-banner::before,
+:root[data-season="thanksgiving"] .thanksgiving-banner::after{
+  content:'';
+  position:absolute;
+  width:82px;
+  height:34px;
+  border-radius:80% 20% 80% 20%;
+  background:rgba(166,79,57,.38);
+  transform:rotate(-18deg);
+}
+
+:root[data-season="thanksgiving"] .thanksgiving-banner::before{
+  left:-24px;
+  bottom:-9px;
+}
+
+:root[data-season="thanksgiving"] .thanksgiving-banner::after{
+  right:-20px;
+  top:-5px;
+  transform:rotate(162deg);
+  background:rgba(116,123,67,.48);
+}
+
+:root[data-season="thanksgiving"] .thanksgiving-banner span{
+  position:relative;
+  z-index:1;
 }
 
 .thanksgiving-banner span[aria-hidden="true"]{
