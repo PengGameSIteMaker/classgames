@@ -1,0 +1,11 @@
+/Tunnel-Rush/*
+  Cache-Control: public, max-age=3600
+
+/Tunnel-Rush/*.unityweb
+  Content-Type: application/octet-stream
+
+/*.js
+  Cache-Control: public, max-age=3600
+
+/*.css
+  Cache-Control: public, max-age=3600

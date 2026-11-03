@@ -1,4 +1,6 @@
 (function(){
+  const isGamePage=document.currentScript?.hasAttribute('data-game-page');
+
   function isNovember(date){
     return date.getMonth() === 10;
   }
@@ -30,7 +32,19 @@
     document.documentElement.dataset.siteTheme = selectedTheme;
 
     if(selectedTheme === 'thanksgiving'||selectedTheme === 'christmas'){
-      if(document.body && !document.querySelector('.thanksgiving-banner')){
+      if(isGamePage){
+        document.documentElement.dataset.gameSeason=selectedTheme;
+        document.querySelector('.thanksgiving-banner')?.remove();
+        if(document.body&&!document.querySelector('.game-season-chip')){
+          const chip=document.createElement('div');
+          chip.className='game-season-chip';
+          chip.setAttribute('aria-label',selectedTheme==='christmas'?'Christmas theme active':'Thanksgiving theme active');
+          chip.textContent=selectedTheme==='christmas'?'🎄':'🍂';
+          document.body.appendChild(chip);
+        }
+        const chip=document.querySelector('.game-season-chip');
+        if(chip)chip.textContent=selectedTheme==='christmas'?'🎄':'🍂';
+      }else if(document.body && !document.querySelector('.thanksgiving-banner')){
         const banner = document.createElement('div');
         banner.className = 'thanksgiving-banner';
         banner.setAttribute('role', 'status');
@@ -46,6 +60,7 @@
       }
     }else{
       document.querySelector('.thanksgiving-banner')?.remove();
+      document.querySelector('.game-season-chip')?.remove();
     }
   }
 

@@ -170,6 +170,23 @@
   box-shadow:0 5px 18px rgba(23,78,58,.22);
 }
 
+.game-season-chip{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  z-index:2147483646;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border:2px solid rgba(255,255,255,.75);
+  border-radius:50%;
+  background:rgba(24,49,38,.88);
+  box-shadow:0 4px 14px rgba(0,0,0,.28);
+  font-size:22px;
+  pointer-events:none;
+}
+
 @media (max-width:480px){
   .thanksgiving-banner{
     min-height:72px;
