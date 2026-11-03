@@ -7,6 +7,8 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%231F3D34' rx='28'/%3E%3Cg fill='none' stroke='%23F1EFE6' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M100 40 C130 40 148 62 148 95 C148 140 132 165 100 165 C68 165 52 140 52 95 C52 62 70 40 100 40 Z'/%3E%3Cpath d='M100 55 C118 55 128 70 128 90 C128 118 116 130 100 130 C84 130 72 118 72 90 C72 70 82 55 100 55 Z'/%3E%3Ccircle cx='88' cy='72' r='3' fill='%23F1EFE6' stroke='none'/%3E%3Ccircle cx='112' cy='72' r='3' fill='%23F1EFE6' stroke='none'/%3E%3Cpath d='M92 82 L108 82 L100 92 Z' fill='%23C79A3D' stroke='none'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<script src="thanksgiving-theme.js"></script>
+<link rel="stylesheet" href="thanksgiving-theme.css">
 <style>
   :root{
     --forest:#1F3D34;
@@ -51,6 +53,13 @@
     display:flex; gap:26px; font-size:13px; color:#CBD5CC;
   }
   .summary-strip strong{color:#fff; font-family:'Source Serif 4',serif; font-size:17px; display:block;}
+  .manager-settings-link{
+    width:38px;height:38px;display:grid;place-items:center;flex-shrink:0;
+    color:#CBD5CC;border:1px solid rgba(241,239,230,.25);border-radius:6px;
+    text-decoration:none;margin-left:auto;
+  }
+  .manager-settings-link:hover{color:#fff;border-color:var(--gold);}
+  .manager-settings-link:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
 
   main{max-width:980px; margin:0 auto; padding:30px 24px 60px;}
 
@@ -185,6 +194,8 @@
   .st-text{flex:1; font-size:13.5px;}
   .subtask-progress{font-size:12px; color:var(--slate); margin:8px 0 4px;}
   .detail-actions{display:flex; justify-content:space-between; gap:10px; margin-top:20px;}
+  body.compact-assignments .row{padding-top:7px;padding-bottom:7px;margin-bottom:5px;}
+  body.compact-assignments .r-meta{gap:6px;}
 
   @media (max-width: 600px){
     header{padding:18px 18px; flex-direction:column; align-items:flex-start; gap:12px;}
@@ -219,6 +230,12 @@
     <div><strong id="statOverdue">0</strong>overdue</div>
     <div><strong id="statWeek">0</strong>due this week</div>
   </div>
+  <a class="manager-settings-link" href="manager-settings.html" aria-label="Manager settings" title="Manager settings">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10 4h4l.6 2a7 7 0 0 1 1.5.9l2-.6 2 3.4-1.4 1.5v1.6l1.4 1.5-2 3.4-2-.6a7 7 0 0 1-1.5.9l-.6 2h-4l-.6-2a7 7 0 0 1-1.5-.9l-2 .6-2-3.4 1.4-1.5v-1.6L3.9 9.7l2-3.4 2 .6a7 7 0 0 1 1.5-.9z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  </a>
 </header>
 
 <main>
@@ -417,6 +434,16 @@
       uniqueClasses().map(c=>`<option value="${c}">`).join('');
   }
 
+  function applyManagerSettings(){
+    let settings = {};
+    try{
+      settings = JSON.parse(localStorage.getItem('penguManagerSettings') || '{}');
+    }catch{}
+    document.getElementById('filterStatus').value = settings.defaultStatus || 'open';
+    document.getElementById('sortBy').value = settings.defaultSort || 'due';
+    document.body.classList.toggle('compact-assignments', settings.compactRows === true);
+  }
+
   function render(){
     renderFilters();
     const classFilter = document.getElementById('filterClass').value;
@@ -530,6 +557,7 @@
     if(pendingConfirmAction) pendingConfirmAction();
     pendingConfirmAction = null;
     closeModal('confirmOverlay');
+    applyManagerSettings();
     render();
   };
 
@@ -659,6 +687,7 @@
     render();
   }
 
+  applyManagerSettings();
   render();
 </script>
 

@@ -1,0 +1,184 @@
+:root[data-season="thanksgiving"]{
+  --forest:#6B3422;
+  --forest-deep:#4A2418;
+  --gold:#E09B3D;
+  --paper:#F2E7D2;
+  --card:#FFF9EC;
+  --line:#DCC8A9;
+  --ink:#392A20;
+  --slate:#78604A;
+  --danger:#A8422F;
+  --ok:#697B45;
+
+  --bg:#241A16;
+  --surface:#35241D;
+  --surface-line:#604735;
+  --cream:#FFF3D6;
+  --cyan:#B9C56A;
+  --magenta:#B75D45;
+  --amber:#E09B3D;
+}
+
+:root[data-season="thanksgiving"][data-theme="light"]{
+  --bg:#F4E9D6;
+  --surface:#FFF9EC;
+  --surface-line:#DCC8A9;
+  --cream:#392A20;
+  --slate:#78604A;
+  --cyan:#777E43;
+  --magenta:#A64F39;
+  --amber:#B87027;
+}
+
+:root[data-season="christmas"]{
+  --forest:#174E3A;
+  --forest-deep:#0F3527;
+  --gold:#D8B84A;
+  --paper:#F4F0E5;
+  --card:#FFFDF7;
+  --line:#C9D1C4;
+  --ink:#183126;
+  --slate:#647267;
+  --danger:#A8422F;
+  --ok:#2F7A52;
+
+  --bg:#172A25;
+  --surface:#233D34;
+  --surface-line:#466155;
+  --cream:#FFF8E8;
+  --cyan:#B9D6C8;
+  --magenta:#B94A4A;
+  --amber:#D8B84A;
+}
+
+:root[data-season="christmas"][data-theme="light"]{
+  --bg:#EDF4EF;
+  --surface:#FFFDF7;
+  --surface-line:#CAD8CE;
+  --cream:#183126;
+  --slate:#647267;
+  --cyan:#3B7860;
+  --magenta:#A33F43;
+  --amber:#B7962D;
+}
+
+:root[data-season="thanksgiving"] body{
+  background:
+    radial-gradient(circle at 12% 18%, rgba(224,155,61,.10) 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 28%, rgba(167,75,48,.09) 0 2px, transparent 3px),
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(224,155,61,.16), transparent 60%),
+    var(--paper, var(--bg));
+  background-size:40px 40px, 54px 54px, auto, auto;
+}
+
+:root[data-season="thanksgiving"] header{
+  border-bottom-color:rgba(224,155,61,.35);
+}
+
+:root[data-season="thanksgiving"] header a,
+:root[data-season="thanksgiving"] header button{
+  transition:color .15s ease, border-color .15s ease;
+}
+
+:root[data-season="thanksgiving"] .bulb{
+  background:#E09B3D;
+  box-shadow:0 0 8px 2px rgba(224,155,61,.55);
+}
+
+:root[data-season="thanksgiving"] .bulb:nth-child(odd){
+  background:#A64F39;
+  box-shadow:0 0 8px 2px rgba(166,79,57,.45);
+}
+
+:root[data-season="thanksgiving"] .bulb:nth-child(3n){
+  background:#747B43;
+  box-shadow:0 0 8px 2px rgba(116,123,67,.45);
+}
+
+:root[data-season="thanksgiving"] .screen,
+:root[data-season="thanksgiving"] .settings-list,
+:root[data-season="thanksgiving"] .row,
+:root[data-season="thanksgiving"] .modal{
+  border-radius:14px;
+}
+
+:root[data-season="thanksgiving"] .nameplate,
+:root[data-season="thanksgiving"] .brand h1{
+  letter-spacing:.08em;
+}
+
+:root[data-season="christmas"] body{
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,.75) 0 2px, transparent 3px),
+    radial-gradient(circle at 76% 12%, rgba(216,184,74,.18) 0 2px, transparent 3px),
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(216,184,74,.14), transparent 60%),
+    var(--paper, var(--bg));
+  background-size:48px 48px, 62px 62px, auto, auto;
+}
+
+:root[data-season="christmas"] header{
+  border-bottom-color:rgba(216,184,74,.45);
+}
+
+:root[data-season="christmas"] .bulb{
+  background:#D8B84A;
+  box-shadow:0 0 8px 2px rgba(216,184,74,.55);
+}
+
+:root[data-season="christmas"] .bulb:nth-child(odd){
+  background:#A84242;
+  box-shadow:0 0 8px 2px rgba(168,66,66,.45);
+}
+
+:root[data-season="christmas"] .bulb:nth-child(3n){
+  background:#F7F5E8;
+  box-shadow:0 0 8px 2px rgba(247,245,232,.45);
+}
+
+.thanksgiving-banner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(10px, 2vw, 18px);
+  min-height:clamp(82px, 9vw, 112px);
+  padding:16px 24px;
+  background:
+    linear-gradient(90deg, rgba(74,36,24,.18), transparent 18%, transparent 82%, rgba(74,36,24,.18)),
+    #E09B3D;
+  color:#3A2418;
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  font-size:clamp(28px, 5vw, 54px);
+  font-weight:700;
+  letter-spacing:.08em;
+  text-align:center;
+  text-transform:uppercase;
+  border-bottom:4px solid #A64F39;
+  box-shadow:0 5px 18px rgba(74,36,24,.18);
+}
+
+.thanksgiving-banner span[aria-hidden="true"]{
+  font-size:.75em;
+  filter:drop-shadow(0 2px 2px rgba(74,36,24,.18));
+}
+
+:root[data-season="christmas"] .thanksgiving-banner{
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.12), transparent 18%, transparent 82%, rgba(255,255,255,.12)),
+    #174E3A;
+  color:#FFF8E8;
+  border-bottom-color:#B94A4A;
+  box-shadow:0 5px 18px rgba(23,78,58,.22);
+}
+
+@media (max-width:480px){
+  .thanksgiving-banner{
+    min-height:72px;
+    padding:12px 10px;
+    gap:8px;
+    letter-spacing:.04em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  :root[data-season="thanksgiving"] .thanksgiving-banner{animation:none;}
+}

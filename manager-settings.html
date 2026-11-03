@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manager Settings | Pengu Assist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<script src="thanksgiving-theme.js"></script>
+<link rel="stylesheet" href="thanksgiving-theme.css">
+<style>
+  :root{--forest:#1F3D34;--forest-deep:#152B24;--gold:#C79A3D;--paper:#EFEFE9;--card:#fff;--line:#DADAD1;--ink:#20241F;--slate:#5E6459;--danger:#A8422F;}
+  :root[data-season="thanksgiving"]{--forest:#6B3422;--forest-deep:#4A2418;--gold:#E09B3D;--paper:#F2E7D2;--card:#FFF9EC;--line:#DCC8A9;--ink:#392A20;--slate:#78604A;--danger:#A8422F;}
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;}
+  header{display:flex;align-items:center;min-height:78px;padding:18px 30px;background:var(--forest);border-bottom:4px solid var(--gold);}
+  .back-link{display:flex;align-items:center;gap:7px;color:#F1EFE6;text-decoration:none;font-size:13px;font-weight:600;}
+  .back-link:hover{color:var(--gold);}
+  h1{font-family:'Source Serif 4',serif;margin:0;font-size:36px;text-align:center;}
+  main{max-width:620px;margin:0 auto;padding:42px 24px 70px;}
+  .title-block{text-align:center;margin-bottom:24px;}
+  .title-block p{margin:6px 0 0;color:var(--slate);font-size:13px;}
+  .settings-list{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .setting-row{min-height:78px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);}
+  .setting-row:last-child{border-bottom:0;}
+  .setting-label{font-size:15px;font-weight:600;}
+  .setting-description{display:block;margin-top:3px;color:var(--slate);font-size:12px;font-weight:400;}
+  select{min-width:160px;padding:8px 34px 8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:600 13px 'Space Grotesk',sans-serif;}
+  select:focus-visible,button:focus-visible,.back-link:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+  .switch{position:relative;width:44px;height:26px;flex-shrink:0;}
+  .switch input{position:absolute;width:1px;height:1px;opacity:0;}
+  .switch-track{position:absolute;inset:0;border-radius:20px;background:#AEB4AA;transition:.15s;}
+  .switch-track::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;transition:.15s;}
+  .switch input:checked+.switch-track{background:var(--gold);}
+  .switch input:checked+.switch-track::after{transform:translateX(18px);}
+  .actions-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;}
+  .actions-spaced{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:10px;}
+  .action-btn{border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);padding:10px 14px;font:600 13px 'Space Grotesk',sans-serif;cursor:pointer;}
+  .action-btn.danger{color:var(--danger);border-color:var(--danger);}
+  .action-link{display:inline-flex;align-items:center;text-decoration:none;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);padding:10px 14px;font-size:13px;font-weight:600;}
+  .hidden-file-input{display:none;}
+  .status-text{min-height:20px;text-align:right;color:var(--slate);font-size:12px;margin-top:10px;}
+  @media(max-width:480px){header{padding:16px 18px;}main{padding:32px 16px;}h1{font-size:30px;}.setting-row{align-items:flex-start;}select{min-width:145px;}}
+</style>
+</head>
+<body>
+<header>
+  <a class="back-link" href="index.html" aria-label="Back to assignment manager">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    Back to Manager
+  </a>
+</header>
+<main>
+  <div class="title-block">
+    <h1>Manager Settings</h1>
+    <p>Customize the assignment manager.</p>
+  </div>
+  <div class="settings-list">
+    <label class="setting-row" for="siteTheme">
+      <span class="setting-label">Theme<span class="setting-description">Choose Normal or Thanksgiving.</span></span>
+      <select id="siteTheme">
+        <option value="normal">Normal</option>
+        <option value="thanksgiving">Thanksgiving</option>
+        <option value="christmas" id="christmasThemeOption" disabled>Christmas — unlocks Dec 1, 2026</option>
+      </select>
+    </label>
+    <label class="setting-row" for="defaultStatus">
+      <span class="setting-label">Default assignment view<span class="setting-description">Filter shown when the manager opens.</span></span>
+      <select id="defaultStatus">
+        <option value="open">Open</option>
+        <option value="unfinished">Unfinished only</option>
+        <option value="done">Finished only</option>
+        <option value="all">All</option>
+      </select>
+    </label>
+    <label class="setting-row" for="defaultSort">
+      <span class="setting-label">Default sorting<span class="setting-description">Order used when no sort is selected.</span></span>
+      <select id="defaultSort">
+        <option value="due">Due date</option>
+        <option value="priority">Priority</option>
+        <option value="class">Class</option>
+      </select>
+    </label>
+    <label class="setting-row" for="compactRows">
+      <span class="setting-label">Compact assignment rows<span class="setting-description">Reduce spacing in the assignment list.</span></span>
+      <span class="switch">
+        <input id="compactRows" type="checkbox">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
+  </div>
+  <div class="actions-bar">
+    <div class="actions-spaced">
+      <button class="action-btn" type="button" id="downloadSettings">Download settings</button>
+      <button class="action-btn" type="button" id="importSettings">Import settings</button>
+    </div>
+    <button class="action-btn danger" type="button" id="clearCompleted">Clear completed assignments</button>
+  </div>
+  <input class="hidden-file-input" id="settingsFile" type="file" accept="application/json,.json">
+  <div class="status-text" id="settingsStatus" aria-live="polite"></div>
+</main>
+<script>
+  const KEY='penguManagerSettings';
+  const DEFAULTS={defaultStatus:'open',defaultSort:'due',compactRows:false};
+  const GAME_ROOM_KEY='gameRoomSettings';
+
+  function readSettings(){
+    try{return {...DEFAULTS,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return {...DEFAULTS}};
+  }
+
+  function christmasThemeUnlocked(){
+    return new Date() >= new Date(2026,11,1);
+  }
+
+  function updateChristmasThemeAvailability(){
+    document.getElementById('christmasThemeOption').disabled=!christmasThemeUnlocked();
+  }
+
+  function getGameRoomSettings(){
+    try{return JSON.parse(localStorage.getItem(GAME_ROOM_KEY)||'{}')}catch{return {}};
+  }
+
+  function getSelectedTheme(){
+    const gameSettings=getGameRoomSettings();
+    if(gameSettings.siteTheme==='christmas'&&!christmasThemeUnlocked()){
+      return new Date().getMonth()===10?'thanksgiving':'normal';
+    }
+    if(['normal','thanksgiving','christmas'].includes(gameSettings.siteTheme)){
+      return gameSettings.siteTheme;
+    }
+    const now=new Date();
+    if(now>=new Date(2026,11,1)&&now<new Date(2026,11,26)) return 'christmas';
+    return new Date().getMonth()===10?'thanksgiving':'normal';
+  }
+
+  function applySettings(settings){
+    updateChristmasThemeAvailability();
+    document.getElementById('siteTheme').value=getSelectedTheme();
+    document.getElementById('defaultStatus').value=settings.defaultStatus;
+    document.getElementById('defaultSort').value=settings.defaultSort;
+    document.getElementById('compactRows').checked=settings.compactRows;
+  }
+
+  function saveSettings(){
+    const settings={
+      defaultStatus:document.getElementById('defaultStatus').value,
+      defaultSort:document.getElementById('defaultSort').value,
+      compactRows:document.getElementById('compactRows').checked
+    };
+    localStorage.setItem(KEY,JSON.stringify(settings));
+  }
+
+  function saveTheme(){
+    const gameSettings=getGameRoomSettings();
+    const selected=document.getElementById('siteTheme').value;
+    gameSettings.siteTheme=selected==='christmas'&&!christmasThemeUnlocked()
+      ? 'normal'
+      : selected;
+    localStorage.setItem(GAME_ROOM_KEY,JSON.stringify(gameSettings));
+    window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged',{detail:gameSettings}));
+  }
+
+  function downloadSettings(){
+    const payload={
+      version:1,
+      gameRoomSettings:getGameRoomSettings(),
+      penguManagerSettings:readSettings()
+    };
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;
+    link.download='classgames-settings.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    document.getElementById('settingsStatus').textContent='Settings downloaded.';
+  }
+
+  function importSettingsText(text){
+    try{
+      const parsed=JSON.parse(text);
+      if(parsed.gameRoomSettings&&typeof parsed.gameRoomSettings==='object'){
+        const gameSettings={...parsed.gameRoomSettings};
+        if(gameSettings.siteTheme==='christmas'&&!christmasThemeUnlocked()){
+          gameSettings.siteTheme=new Date().getMonth()===10?'thanksgiving':'normal';
+        }
+        localStorage.setItem(GAME_ROOM_KEY,JSON.stringify(gameSettings));
+      }else if(typeof parsed==='object'&&(
+        'showDailyPick' in parsed||
+        'animateLights' in parsed||
+        'rememberSearch' in parsed||
+        'lightMode' in parsed||
+        'siteTheme' in parsed||
+        'favoriteGames' in parsed||
+        'muteSite' in parsed
+      )){
+        const gameSettings={...parsed};
+        if(gameSettings.siteTheme==='christmas'&&!christmasThemeUnlocked()){
+          gameSettings.siteTheme=new Date().getMonth()===10?'thanksgiving':'normal';
+        }
+        localStorage.setItem(GAME_ROOM_KEY,JSON.stringify(gameSettings));
+      }
+      if(parsed.penguManagerSettings&&typeof parsed.penguManagerSettings==='object'){
+        const merged={...DEFAULTS,...parsed.penguManagerSettings};
+        localStorage.setItem(KEY,JSON.stringify(merged));
+        applySettings(merged);
+      }else if(typeof parsed==='object'&&(
+        'defaultStatus' in parsed||
+        'defaultSort' in parsed||
+        'compactRows' in parsed
+      )){
+        const merged={...DEFAULTS,...parsed};
+        localStorage.setItem(KEY,JSON.stringify(merged));
+        applySettings(merged);
+      }
+      window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged',{detail:getGameRoomSettings()}));
+      document.getElementById('settingsStatus').textContent='Settings imported successfully.';
+    }catch{
+      document.getElementById('settingsStatus').textContent='That is not valid settings JSON.';
+    }
+  }
+
+  document.getElementById('defaultStatus').addEventListener('change',saveSettings);
+  document.getElementById('defaultSort').addEventListener('change',saveSettings);
+  document.getElementById('compactRows').addEventListener('change',saveSettings);
+  document.getElementById('siteTheme').addEventListener('change',saveTheme);
+  document.getElementById('downloadSettings').addEventListener('click',downloadSettings);
+  document.getElementById('importSettings').addEventListener('click',function(){
+    document.getElementById('settingsFile').click();
+  });
+  document.getElementById('settingsFile').addEventListener('change',function(event){
+    const [file]=event.target.files||[];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=()=>importSettingsText(String(reader.result||''));
+    reader.readAsText(file);
+  });
+  document.getElementById('clearCompleted').addEventListener('click',function(){
+    const assignments=JSON.parse(localStorage.getItem('docket_assignments_v1')||'[]');
+    const remaining=assignments.filter(a=>!a.done);
+    localStorage.setItem('docket_assignments_v1',JSON.stringify(remaining));
+    document.cookie='docket_assignments_v1='+encodeURIComponent(JSON.stringify(remaining))+'; expires='+new Date(Date.now()+365*86400000).toUTCString()+'; path=/; SameSite=Lax';
+    this.textContent='Completed assignments cleared';
+    this.disabled=true;
+  });
+  applySettings(readSettings());
+</script>
+</body>
+</html>

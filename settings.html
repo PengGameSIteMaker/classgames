@@ -6,6 +6,8 @@
 <title>Settings | Game Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@600&display=swap" rel="stylesheet">
+<script src="thanksgiving-theme.js"></script>
+<link rel="stylesheet" href="thanksgiving-theme.css">
 <style>
   :root{
     --bg:#12131A;
@@ -54,6 +56,17 @@
   }
   .setting-row:last-child{border-bottom:0;}
   .setting-label{font-size:15px; font-weight:500;}
+  .theme-select{
+    min-width:150px;
+    padding:8px 34px 8px 10px;
+    border:1px solid var(--surface-line);
+    border-radius:7px;
+    background:var(--surface);
+    color:var(--cream);
+    font:600 13px 'Space Grotesk',system-ui,sans-serif;
+    cursor:pointer;
+  }
+  .theme-select:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
   .settings-actions{
     margin-top:24px; display:grid; gap:14px;
   }
@@ -102,6 +115,14 @@
 </div>
 <main>
   <div class="settings-list">
+    <label class="setting-row" for="siteTheme">
+      <span class="setting-label">Theme</span>
+      <select class="theme-select" id="siteTheme" aria-label="Theme">
+        <option value="normal">Normal</option>
+        <option value="thanksgiving">Thanksgiving</option>
+        <option value="christmas" id="christmasThemeOption" disabled>Christmas — unlocks Dec 1, 2026</option>
+      </select>
+    </label>
     <label class="setting-row" for="showDailyPick">
       <span class="setting-label">Show daily pick</span>
       <span class="switch">
@@ -155,8 +176,24 @@
     rememberSearch:false,
     muteSite:false,
     lightMode:false,
+    siteTheme:null,
     favoriteGames:[]
   };
+
+  function getDefaultTheme(){
+    const now=new Date();
+    if(now>=new Date(2026,11,1)&&now<new Date(2026,11,26)) return 'christmas';
+    return now.getMonth() === 10 ? 'thanksgiving' : 'normal';
+  }
+
+  function christmasThemeUnlocked(){
+    return new Date() >= new Date(2026,11,1);
+  }
+
+  function updateChristmasThemeAvailability(){
+    const option=document.getElementById('christmasThemeOption');
+    option.disabled=!christmasThemeUnlocked();
+  }
 
   function readSettings(){
     try{
@@ -168,6 +205,10 @@
   }
 
   function applySettings(settings){
+    updateChristmasThemeAvailability();
+    const theme=settings.siteTheme || getDefaultTheme();
+    document.getElementById('siteTheme').value =
+      theme==='christmas'&&!christmasThemeUnlocked() ? getDefaultTheme() : theme;
     document.getElementById('showDailyPick').checked = settings.showDailyPick;
     document.getElementById('animateLights').checked = settings.animateLights;
     document.getElementById('rememberSearch').checked = settings.rememberSearch;
@@ -179,13 +220,17 @@
 
   function saveSettings(){
     const existing = readSettings();
+    const selectedTheme=document.getElementById('siteTheme').value;
     const settings = {
       ...existing,
       showDailyPick:document.getElementById('showDailyPick').checked,
       animateLights:document.getElementById('animateLights').checked,
       rememberSearch:document.getElementById('rememberSearch').checked,
       lightMode:document.getElementById('lightMode').checked,
-      muteSite:document.getElementById('muteSite').checked
+      muteSite:document.getElementById('muteSite').checked,
+      siteTheme:selectedTheme==='christmas'&&!christmasThemeUnlocked()
+        ? 'normal'
+        : selectedTheme
     };
     localStorage.setItem('gameRoomSettings', JSON.stringify(settings));
     if(!settings.rememberSearch){
@@ -220,6 +265,9 @@
     try{
       const parsed = JSON.parse(text);
       const merged = { ...DEFAULT_SETTINGS, ...parsed, favoriteGames: Array.isArray(parsed.favoriteGames) ? parsed.favoriteGames : [] };
+      if(merged.siteTheme==='christmas'&&!christmasThemeUnlocked()){
+        merged.siteTheme=getDefaultTheme();
+      }
       localStorage.setItem('gameRoomSettings', JSON.stringify(merged));
       applySettings(merged);
       window.dispatchEvent(new CustomEvent('gameRoomSettingsChanged', { detail: merged }));
@@ -251,6 +299,7 @@
 
   applySettings(readSettings());
   document.querySelectorAll('.switch input').forEach(input => input.addEventListener('change', saveSettings));
+  document.getElementById('siteTheme').addEventListener('change', saveSettings);
   document.getElementById('exportSettingsBtn').addEventListener('click', exportSettings);
   document.getElementById('importSettingsBtn').addEventListener('click', importSettings);
   document.getElementById('settingsFileInput').addEventListener('change', handleSettingsFileImport);
