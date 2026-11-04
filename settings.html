@@ -121,6 +121,9 @@
         <option value="normal">Normal</option>
         <option value="thanksgiving">Thanksgiving</option>
         <option value="christmas" id="christmasThemeOption" disabled>Christmas — unlocks Dec 1, 2026</option>
+        <option value="snowglobe" id="snowglobeThemeOption" disabled>Snow Globe — must unlock stickers</option>
+        <option value="sugarplum" id="sugarplumThemeOption" disabled>Sugar Plum — must unlock stickers</option>
+        <option value="aurora" id="auroraThemeOption" disabled>Aurora Wonderland — must unlock stickers</option>
       </select>
     </label>
     <label class="setting-row" for="showDailyPick">
@@ -190,9 +193,30 @@
     return new Date() >= new Date(2026,11,1);
   }
 
+  function getStickerCount(){
+    try{
+      const state=JSON.parse(localStorage.getItem('classgamesAdvent2026')||'{}');
+      return Array.isArray(state.stickers)?state.stickers.length:0;
+    }catch{return 0;}
+  }
+
   function updateChristmasThemeAvailability(){
     const option=document.getElementById('christmasThemeOption');
     option.disabled=!christmasThemeUnlocked();
+    const stickerCount=getStickerCount();
+    const rewardOptions=[
+      ['snowglobeThemeOption','Snow Globe',5],
+      ['sugarplumThemeOption','Sugar Plum',10],
+      ['auroraThemeOption','Aurora Wonderland',24]
+    ];
+    rewardOptions.forEach(([id,name,required])=>{
+      const option=document.getElementById(id);
+      const remaining=Math.max(0,required-stickerCount);
+      option.disabled=remaining>0;
+      option.textContent=remaining>0
+        ? `${name} — must unlock ${remaining} more sticker${remaining===1?'':'s'}`
+        : name;
+    });
   }
 
   function readSettings(){
@@ -207,8 +231,10 @@
   function applySettings(settings){
     updateChristmasThemeAvailability();
     const theme=settings.siteTheme || getDefaultTheme();
+    const stickerCount=getStickerCount();
+    const themeLocked=(theme==='snowglobe'&&stickerCount<5)||(theme==='sugarplum'&&stickerCount<10)||(theme==='aurora'&&stickerCount<24);
     document.getElementById('siteTheme').value =
-      theme==='christmas'&&!christmasThemeUnlocked() ? getDefaultTheme() : theme;
+      theme==='christmas'&&!christmasThemeUnlocked() || themeLocked ? getDefaultTheme() : theme;
     document.getElementById('showDailyPick').checked = settings.showDailyPick;
     document.getElementById('animateLights').checked = settings.animateLights;
     document.getElementById('rememberSearch').checked = settings.rememberSearch;
@@ -266,6 +292,10 @@
       const parsed = JSON.parse(text);
       const merged = { ...DEFAULT_SETTINGS, ...parsed, favoriteGames: Array.isArray(parsed.favoriteGames) ? parsed.favoriteGames : [] };
       if(merged.siteTheme==='christmas'&&!christmasThemeUnlocked()){
+        merged.siteTheme=getDefaultTheme();
+      }
+      const stickerCount=getStickerCount();
+      if((merged.siteTheme==='snowglobe'&&stickerCount<5)||(merged.siteTheme==='sugarplum'&&stickerCount<10)||(merged.siteTheme==='aurora'&&stickerCount<24)){
         merged.siteTheme=getDefaultTheme();
       }
       localStorage.setItem('gameRoomSettings', JSON.stringify(merged));

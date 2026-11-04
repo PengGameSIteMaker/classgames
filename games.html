@@ -59,6 +59,12 @@
   .settings-link svg{display:block;}
   .settings-link:hover{color:var(--cream); border-color:var(--amber);}
   .settings-link:focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+  .advent-link{
+    margin-left:auto; color:var(--amber); text-decoration:none; font-size:12px; font-weight:700;
+    border:1px solid rgba(255,200,87,.35); border-radius:999px; padding:8px 12px;
+  }
+  .advent-link[hidden]{display:none;}
+  .advent-link:hover{background:rgba(255,200,87,.08);}
 
   .marquee{
     text-align:center;
@@ -228,6 +234,7 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     Back to Pengu Assist
   </a>
+  <a class="advent-link" id="adventLink" href="advent-calendar.html" hidden>December Advent</a>
   <a class="settings-link" href="settings.html" aria-label="Settings" title="Settings">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4h4l.6 2a7 7 0 0 1 1.5.9l2-.6 2 3.4-1.4 1.5v1.6l1.4 1.5-2 3.4-2-.6a7 7 0 0 1-1.5.9l-.6 2h-4l-.6-2a7 7 0 0 1-1.5-.9l-2 .6-2-3.4 1.4-1.5v-1.6L3.9 9.7l2-3.4 2 .6a7 7 0 0 1 1.5-.9z"/><circle cx="12" cy="12" r="3"/></svg>
   </a>
@@ -591,6 +598,10 @@
       window.location.href = 'beta.html';
       return;
     }
+    if(allowBetaRedirect && q === 'winter preview'){
+      window.location.href = 'advent-calendar.html?preview=winter2026';
+      return;
+    }
     const cards = document.querySelectorAll('#gameGrid .cabinet');
     let visibleCount = 0;
     cards.forEach(card => {
@@ -613,6 +624,11 @@
   document.documentElement.dataset.theme = currentSettings.lightMode ? 'light' : 'dark';
   if(!currentSettings.animateLights){
     document.documentElement.classList.add('reduced-lights');
+  }
+
+  const now = new Date();
+  if(now.getFullYear() === 2026 && now.getMonth() === 11){
+    document.getElementById('adventLink').hidden = false;
   }
 
   renderDailyPick();

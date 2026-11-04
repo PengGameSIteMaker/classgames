@@ -62,6 +62,58 @@
   --amber:#B7962D;
 }
 
+:root[data-season="snowglobe"]{
+  --bg:#91BBC8;
+  --surface:#E7F3F5;
+  --surface-line:#B9D3DA;
+  --cream:#173C32;
+  --slate:#55726B;
+  --cyan:#6FC9D8;
+  --magenta:#A95D77;
+  --amber:#F1C967;
+}
+
+:root[data-season="sugarplum"]{
+  --bg:#351D46;
+  --surface:#4C3059;
+  --surface-line:#7A5479;
+  --cream:#FFF4FB;
+  --slate:#D4B6CE;
+  --cyan:#8EC9DA;
+  --magenta:#E58AB8;
+  --amber:#D6B5FF;
+}
+
+:root[data-season="aurora"]{
+  --bg:#071B34;
+  --surface:#173D55;
+  --surface-line:#4D7280;
+  --cream:#ECFFFA;
+  --slate:#A7C7C9;
+  --cyan:#63E7FF;
+  --magenta:#BE78FF;
+  --amber:#74E9C5;
+}
+
+:root[data-season="snowglobe"] body{
+  background:radial-gradient(circle at 20% 12%,rgba(255,255,255,.85),transparent 2px),
+    radial-gradient(circle at 75% 24%,rgba(255,255,255,.65),transparent 2px),
+    linear-gradient(145deg,#91BBC8,#E2F0F2 48%,#6F9FAB);
+  background-size:40px 40px,54px 54px,auto;
+}
+
+:root[data-season="sugarplum"] body{
+  background:radial-gradient(circle at 20% 20%,rgba(255,180,220,.18),transparent 24%),
+    radial-gradient(circle at 82% 12%,rgba(162,142,255,.20),transparent 28%),
+    linear-gradient(145deg,#351D46,#713B6B 48%,#1D3F6D);
+}
+
+:root[data-season="aurora"] body{
+  background:radial-gradient(circle at 18% 12%,rgba(99,231,255,.20),transparent 24%),
+    radial-gradient(circle at 82% 18%,rgba(190,120,255,.18),transparent 26%),
+    linear-gradient(145deg,#071B34,#173D55 48%,#2D2350);
+}
+
 :root[data-season="thanksgiving"] body{
   background:
     radial-gradient(circle at 12% 18%, rgba(224,155,61,.14) 0 2px, transparent 3px),

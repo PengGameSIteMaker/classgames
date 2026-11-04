@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>December Advent | Game Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{--night:#091827;--ink:#173c32;--snow:#f7f4e8;--red:#b94343;--gold:#f5c86b;--green:#285c48;--line:rgba(247,244,232,.18)}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:'DM Sans',system-ui,sans-serif;color:var(--snow);background:radial-gradient(circle at 50% -20%,#315a74 0,#102a3b 38%,var(--night) 78%) fixed}
+    body.retro-theme{image-rendering:pixelated;background:linear-gradient(180deg,#10172a,#263b73)}
+    body.puzzle-theme{background:radial-gradient(circle at 18% 12%,rgba(99,231,255,.28),transparent 24%),radial-gradient(circle at 82% 18%,rgba(190,120,255,.24),transparent 26%),linear-gradient(145deg,#071b34 0%,#173d55 48%,#2d2350 100%) fixed}
+    body.puzzle-theme::before{content:'';position:fixed;z-index:-1;left:-15%;right:-15%;top:-35%;height:75%;background:linear-gradient(115deg,transparent 20%,rgba(90,255,205,.18) 42%,rgba(154,115,255,.24) 56%,transparent 76%);filter:blur(18px);transform:rotate(-8deg);animation:aurora 7s ease-in-out infinite alternate}
+    @keyframes aurora{from{transform:translateX(-4%) rotate(-8deg);opacity:.65}to{transform:translateX(5%) rotate(-4deg);opacity:1}}
+    body.puzzle-theme header{background:rgba(7,27,52,.72)}
+    body.puzzle-theme .streak-card,body.puzzle-theme .progress-shell,body.puzzle-theme .grand-reveal,body.puzzle-theme .warning{border-color:rgba(111,238,209,.38);box-shadow:0 0 28px rgba(91,205,218,.08)}
+    body.puzzle-theme .door{box-shadow:0 14px 30px rgba(0,0,0,.3),0 0 18px rgba(111,238,209,.12)}
+    .theme-reward{border-color:rgba(111,238,209,.55)!important;color:#b9ffe8!important}
+    body.snowglobe-theme{background:radial-gradient(circle at 50% 8%,rgba(255,255,255,.22),transparent 18%),linear-gradient(145deg,#8ec5d8 0%,#dceef1 48%,#6b9eb0 100%) fixed;color:#173c32}
+    body.snowglobe-theme header{background:rgba(222,241,244,.78)}
+    body.snowglobe-theme header a{color:#173c32}
+    body.snowglobe-theme .streak-card,body.snowglobe-theme .progress-shell,body.snowglobe-theme .grand-reveal,body.snowglobe-theme .warning{background:rgba(255,255,255,.58);border-color:rgba(255,255,255,.75);color:#173c32}
+    body.snowglobe-theme .calendar{filter:drop-shadow(0 0 18px rgba(255,255,255,.45))}
+    body.sugarplum-theme{background:radial-gradient(circle at 20% 20%,rgba(255,180,220,.26),transparent 24%),radial-gradient(circle at 82% 12%,rgba(162,142,255,.28),transparent 28%),linear-gradient(145deg,#351d46 0%,#713b6b 48%,#1d3f6d 100%) fixed}
+    body.sugarplum-theme header{background:rgba(53,29,70,.72)}
+    body.sugarplum-theme .streak-card,body.sugarplum-theme .progress-shell,body.sugarplum-theme .grand-reveal,body.sugarplum-theme .warning{border-color:rgba(255,190,229,.38);box-shadow:0 0 26px rgba(255,145,207,.09)}
+    body.sugarplum-theme .door{border-color:#d4a4c6;box-shadow:0 14px 28px rgba(0,0,0,.32),0 0 16px rgba(255,175,220,.14)}
+    header{height:72px;padding:0 32px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);background:rgba(7,20,32,.55);backdrop-filter:blur(12px)}
+    header a{color:#dbe9df;text-decoration:none;font-size:13px;font-weight:700}
+    header a:hover{color:var(--gold)}
+    .settings-button{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
+    .settings-button:hover{border-color:var(--gold)}
+    main{width:min(1120px,calc(100% - 32px));margin:auto;padding:44px 0 72px}
+    .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px}
+    .eyebrow{color:var(--gold);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.18em}
+    h1{margin:5px 0 0;font-family:'Mountains of Christmas',cursive;font-size:clamp(42px,8vw,74px);line-height:.9;text-shadow:0 4px 20px rgba(0,0,0,.25)}
+    .streak-card{min-width:210px;border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:rgba(247,244,232,.07)}
+    .streak-card strong{display:block;font-family:'Mountains of Christmas',cursive;font-size:34px;color:var(--gold)}
+    .streak-card span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#b9c9c0}
+    .progress-shell{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:24px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:rgba(247,244,232,.05)}
+    .progress-copy{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;color:#c8d5cf}
+    .progress-track{height:8px;border-radius:99px;background:rgba(247,244,232,.1);overflow:hidden}
+    .progress-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .4s ease}
+    .rewards{display:flex;gap:8px}
+    .reward{border:1px solid var(--line);border-radius:999px;background:transparent;color:#9badA5;padding:9px 11px;font-size:11px;cursor:pointer}
+    .reward:disabled{opacity:.45;cursor:not-allowed}
+    .reward.unlocked{border-color:var(--gold);color:var(--gold);background:rgba(245,200,107,.08)}
+    .calendar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+    .door{position:relative;aspect-ratio:.82;border:8px solid #d6b98a;border-bottom-width:10px;border-radius:12px 12px 4px 4px;padding:0;overflow:hidden;font-family:inherit;color:var(--snow);cursor:pointer;background:#071018;box-shadow:0 10px 24px rgba(0,0,0,.3),inset 0 0 0 2px #f5e0b5;perspective:700px;transition:transform .18s,box-shadow .18s}
+    .door:nth-child(3n){border-color:#a9c7b6;box-shadow:0 10px 24px rgba(0,0,0,.3),inset 0 0 0 2px #dce9df}
+    .door:nth-child(4n){border-color:#8d9ea9;box-shadow:0 10px 24px rgba(0,0,0,.3),inset 0 0 0 2px #cbd6dc}
+    .door:not(:disabled):hover{transform:translateY(-5px);box-shadow:0 16px 30px rgba(0,0,0,.38),inset 0 0 0 2px #fff4cf}
+    .door:disabled{cursor:not-allowed;filter:saturate(.35);opacity:.62}
+    .door-view{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#fff7cf 0,#7ba7a0 35%,#17364a 72%,#091827 100%);color:#173c32;font-size:38px}
+    .door-view-label{font-size:9px;margin-top:8px;max-width:82%;line-height:1.2;color:#173c32;text-align:center;font-weight:700}
+    .door-panel{position:absolute;inset:0;z-index:2;transform-origin:left center;transition:transform .75s cubic-bezier(.22,.75,.25,1),filter .75s ease;background:linear-gradient(135deg,#b94343 0,#7f3038 100%);box-shadow:inset 0 0 0 4px rgba(255,255,255,.12),inset 0 0 0 8px rgba(74,18,25,.18);backface-visibility:hidden}
+    .door:nth-child(3n) .door-panel{background:linear-gradient(135deg,#4d8068,#285c48)}
+    .door:nth-child(4n) .door-panel{background:linear-gradient(135deg,#496b80,#263f56)}
+    .door.opening .door-panel,.door.opened .door-panel{transform:rotateY(-112deg);filter:brightness(.88)}
+    .door.opening{animation:doorBounce .75s ease}
+    @keyframes doorBounce{0%{transform:translateY(0)}35%{transform:translateY(-4px) scale(1.015)}100%{transform:translateY(0)}}
+    .door-panel::before,.door-panel::after{content:'';position:absolute;left:16%;right:16%;border:2px solid rgba(255,244,207,.55);border-radius:4px;height:28%}
+    .door-panel::before{top:14%}.door-panel::after{bottom:12%}
+    .door-number{position:absolute;left:50%;top:44%;z-index:3;transform:translate(-50%,-50%);font-family:'Mountains of Christmas',cursive;font-size:30px;color:#fff;text-shadow:0 2px 7px rgba(0,0,0,.4)}
+    .door-handle{position:absolute;right:10%;top:50%;z-index:3;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px #8d6728}
+    .door.opened::after{content:'Sticker collected';position:absolute;left:50%;bottom:3px;z-index:4;transform:translateX(-50%);color:var(--gold);font-size:7px;font-weight:700;white-space:nowrap}
+    .warning{margin-top:20px;border-radius:12px;padding:12px 14px;border:1px solid rgba(245,200,107,.22);background:rgba(245,200,107,.07);color:#e2dcc5;font-size:12px}
+    .grand-reveal{display:none;margin-top:20px;border:1px solid var(--gold);border-radius:18px;padding:24px;text-align:center;background:linear-gradient(135deg,rgba(245,200,107,.15),rgba(185,67,67,.12))}
+    .grand-reveal.visible{display:block}
+    .grand-reveal strong{font-family:'Mountains of Christmas',cursive;font-size:30px;color:var(--gold)}
+    .snow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+    .flake{position:absolute;top:-20px;color:white;opacity:.5;animation:fall linear infinite}
+    @keyframes fall{to{transform:translateY(105vh) rotate(240deg)}}
+    .locked-screen{display:none;max-width:620px;margin:12vh auto;text-align:center;padding:28px}
+    .locked-screen.visible{display:block}
+    .locked-screen .seal{width:90px;height:90px;border-radius:50%;display:grid;place-items:center;margin:0 auto 20px;border:1px solid var(--line);font-size:38px;background:rgba(247,244,232,.07)}
+    .locked-screen h2{font-family:'Mountains of Christmas',cursive;font-size:44px;margin:0 0 10px}
+    .locked-screen p{color:#b9c9c0}
+    @media(max-width:760px){header{padding:0 18px}.hero{align-items:center}.streak-card{min-width:150px}.calendar{grid-template-columns:repeat(4,minmax(0,1fr))}.progress-shell{grid-template-columns:1fr}.rewards{justify-content:flex-start}}
+    @media(max-width:480px){main{width:min(100% - 20px,1120px);padding-top:28px}.hero{align-items:flex-end}.streak-card{min-width:120px}.streak-card strong{font-size:28px}.calendar{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.door{border-radius:10px}.door-number{font-size:22px}}
+    @media(prefers-reduced-motion:reduce){.flake{animation:none}.door{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="snow" id="snow" aria-hidden="true"></div>
+  <header>
+    <a href="games.html">← Back to Game Room</a>
+    <a class="settings-button" href="settings.html">⚙ Settings</a>
+  </header>
+  <main>
+    <div class="locked-screen" id="lockedScreen">
+      <div class="seal">🎄</div>
+      <h2>The doors are still sleeping</h2>
+      <p>This advent calendar appears from December 1 through December 31, 2026. The 24 doors open one by one.</p>
+      <a href="games.html" style="color:#f5c86b">Return to Game Room</a>
+    </div>
+
+    <div id="adventContent">
+      <section class="hero">
+        <div><div class="eyebrow" id="eyebrow">December 2026</div><h1>Winter Doorways</h1></div>
+        <div class="streak-card"><strong id="streakCount">0</strong><span id="streakLabel">day streak</span></div>
+      </section>
+      <section class="progress-shell">
+        <div>
+          <div class="progress-copy"><strong id="stickerCount">0 of 24 stickers</strong><span id="progressPercent">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="rewards">
+          <button class="reward" id="reward5" type="button" disabled>5 stickers: Snow Globe</button>
+          <button class="reward" id="reward10" type="button" disabled>10 stickers: Sugar Plum</button>
+          <button class="reward theme-reward" id="rewardPuzzle" type="button" disabled>24-piece aurora theme</button>
+        </div>
+      </section>
+      <section class="calendar" id="calendar" aria-label="24 day advent calendar"></section>
+      <div class="grand-reveal" id="grandReveal"><strong>24-piece puzzle complete!</strong><p>New theme unlocked: Aurora Wonderland.</p></div>
+      <div class="warning">Save safely: progress lives in this browser's cookies and local storage. Don't clear cookies or site data until the collection is complete.</div>
+    </div>
+  </main>
+
+  <script>
+    const DOORS = [
+      ['Golden Ornament','🔔'],['Gingerbread Star','🍪'],['Candy Cane','🍭'],['Snowy Pine','🌲'],
+      ['Mittens','🧤'],['Warm Scarf','🧣'],['Snowflake','❄️'],['Red Bow','🎀'],
+      ['Christmas Stocking','🧦'],['North Star','⭐'],['Little Sleigh','🛷'],['Holiday Lights','💡'],
+      ['Snowman','☃️'],['Cozy Cocoa','☕'],['Wooden Reindeer','🦌'],['Wax Candle','🕯️'],
+      ['Wrapped Gift','🎁'],['Silver Bell','🔔'],['Robin Redbreast','🐦'],['Evergreen Wreath','🌿'],
+      ['Sugar Cookie','🍪'],['Christmas Pudding','🍮'],['North Pole Star','🌟'],['Grand Christmas Tree','🎄']
+    ];
+    const KEY = 'classgamesAdvent2026';
+    const now = new Date();
+    const inSeason = true;
+    const localDay = 24;
+
+    document.getElementById('lockedScreen').classList.toggle('visible', !inSeason);
+    document.getElementById('adventContent').style.display = inSeason ? '' : 'none';
+
+    function readState(){
+      try{
+        let raw = localStorage.getItem(KEY);
+        if(!raw){
+          const cookie = document.cookie.split('; ').find(part => part.trim().startsWith(KEY+'='));
+          if(cookie) raw = decodeURIComponent(cookie.split('=').slice(1).join('='));
+        }
+        const state = JSON.parse(raw || '{}');
+        const stickers=Array.isArray(state.stickers)?state.stickers:[];
+        const puzzleTheme=Object.prototype.hasOwnProperty.call(state,'puzzleTheme')?state.puzzleTheme===true:false;
+        const milestoneTheme=typeof state.milestoneTheme==='string'?state.milestoneTheme:null;
+        return {openedDates:Array.isArray(state.openedDates)?state.openedDates:[], stickers, lastVisit:state.lastVisit||'', streak:Number(state.streak)||0, retro:state.retro===true, puzzleTheme, milestoneTheme};
+      }catch{return {openedDates:[],stickers:[],lastVisit:'',streak:0,retro:false,puzzleTheme:false,milestoneTheme:null}}
+    }
+    function dateKey(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
+    function saveState(state){
+      localStorage.setItem(KEY,JSON.stringify(state));
+      const expires = new Date(2027,0,31);
+      document.cookie = `${KEY}=${encodeURIComponent(JSON.stringify(state))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+    }
+    function updateStreak(){
+      if(!inSeason) return readState();
+      const state = readState();
+      const today = dateKey(now);
+      if(state.lastVisit !== today){
+        const yesterday = new Date(now); yesterday.setDate(now.getDate()-1);
+        state.streak = state.lastVisit === dateKey(yesterday) ? state.streak+1 : 1;
+        state.lastVisit = today;
+        saveState(state);
+      }
+      return state;
+    }
+    function render(){
+      const state = updateStreak();
+      document.getElementById('streakCount').textContent = state.streak;
+      document.getElementById('stickerCount').textContent = `${state.stickers.length} of 24 stickers`;
+      document.getElementById('progressPercent').textContent = `${Math.round(state.stickers.length/24*100)}%`;
+      document.getElementById('progressFill').style.width = `${state.stickers.length/24*100}%`;
+      document.body.classList.toggle('retro-theme',state.retro && state.streak >= 5);
+      const puzzleUnlocked=state.stickers.length===24;
+      document.body.classList.toggle('puzzle-theme',puzzleUnlocked && state.puzzleTheme);
+      document.body.classList.toggle('snowglobe-theme',state.milestoneTheme==='snowglobe' && state.stickers.length>=5 && !(puzzleUnlocked && state.puzzleTheme));
+      document.body.classList.toggle('sugarplum-theme',state.milestoneTheme==='sugarplum' && state.stickers.length>=10 && !(puzzleUnlocked && state.puzzleTheme));
+
+      const reward5=document.getElementById('reward5'), reward10=document.getElementById('reward10');
+      reward5.disabled=state.stickers.length<5; reward10.disabled=state.stickers.length<10;
+      reward5.classList.toggle('unlocked',state.stickers.length>=5 && state.milestoneTheme==='snowglobe');
+      reward10.classList.toggle('unlocked',state.stickers.length>=10 && state.milestoneTheme==='sugarplum');
+      reward5.textContent=state.stickers.length>=5?(state.milestoneTheme==='snowglobe'?'Snow Globe: on':'Snow Globe: off'):'5 stickers to unlock';
+      reward10.textContent=state.stickers.length>=10?(state.milestoneTheme==='sugarplum'?'Sugar Plum: on':'Sugar Plum: off'):'10 stickers to unlock';
+      const rewardPuzzle=document.getElementById('rewardPuzzle');
+      rewardPuzzle.disabled=!puzzleUnlocked;
+      rewardPuzzle.classList.toggle('unlocked',puzzleUnlocked && state.puzzleTheme);
+      rewardPuzzle.textContent=puzzleUnlocked?(state.puzzleTheme?'Aurora theme on':'Aurora theme off'):'24-piece theme locked';
+      document.getElementById('grandReveal').classList.toggle('visible',puzzleUnlocked);
+
+      document.getElementById('calendar').innerHTML = DOORS.map((door,index)=>{
+        const day=index+1, unlocked=inSeason && day<=localDay;
+        const opened=state.stickers.includes(String(day));
+        return `<button class="door${opened?' opened':''}" type="button" data-day="${day}" ${unlocked?'':'disabled'} aria-label="${unlocked?`Open door ${day}`:`Door ${day} unlocks December ${day}`}">
+          <span class="door-view"><span>${opened?door[1]: '🎄'}</span><span class="door-view-label">${opened?door[0]:(unlocked?'A winter sticker waits':'Locked until December '+day)}</span></span>
+          <span class="door-panel"><span class="door-number">${day}</span><span class="door-handle"></span></span>
+        </button>`;
+      }).join('');
+    }
+    function openDoor(day){
+      const state=readState();
+      const id=String(day);
+      const doorButton=document.querySelector(`.door[data-day="${day}"]`);
+      if(!state.stickers.includes(id)){
+        state.stickers.push(id);
+        saveState(state);
+      }
+      if(doorButton){
+        doorButton.classList.add('opening');
+        window.setTimeout(()=>render(),750);
+      }else{
+        render();
+      }
+    }
+    if(inSeason){
+      document.querySelectorAll('.door').forEach(()=>{});
+      render();
+      document.getElementById('calendar').addEventListener('click',event=>{
+        const door=event.target.closest('.door');
+        if(door && !door.disabled) openDoor(Number(door.dataset.day));
+      });
+      document.getElementById('reward5').addEventListener('click',()=>{
+        const state=readState();
+        if(state.stickers.length>=5){
+          state.milestoneTheme=state.milestoneTheme==='snowglobe'?null:'snowglobe';
+          if(state.milestoneTheme==='snowglobe') state.puzzleTheme=false;
+          saveState(state);render();
+        }
+      });
+      document.getElementById('reward10').addEventListener('click',()=>{
+        const state=readState();
+        if(state.stickers.length>=10){
+          state.milestoneTheme=state.milestoneTheme==='sugarplum'?null:'sugarplum';
+          if(state.milestoneTheme==='sugarplum') state.puzzleTheme=false;
+          saveState(state);render();
+        }
+      });
+      document.getElementById('rewardPuzzle').addEventListener('click',()=>{
+        const state=readState();
+        if(state.stickers.length===24){
+          state.puzzleTheme=!state.puzzleTheme;
+          if(state.puzzleTheme) state.milestoneTheme=null;
+          saveState(state);
+          render();
+        }
+      });
+      const snow=document.getElementById('snow');
+      if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        for(let i=0;i<28;i++){
+          const flake=document.createElement('span');
+          flake.className='flake';flake.textContent=i%4?'•':'✦';
+          flake.style.left=`${Math.random()*100}%`;flake.style.fontSize=`${5+Math.random()*12}px`;
+          flake.style.animationDuration=`${8+Math.random()*10}s`;flake.style.animationDelay=`-${Math.random()*12}s`;
+          snow.appendChild(flake);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
