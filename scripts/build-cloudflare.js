@@ -38,7 +38,24 @@ function copyDirectory(source, destination) {
   }
 }
 
+function removeOversizedAssets(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const entryPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      removeOversizedAssets(entryPath);
+    } else if (entry.isFile()) {
+      const size = fs.statSync(entryPath).size;
+      if (size > maxAssetSize) {
+        fs.rmSync(entryPath, { force: true });
+        const relativePath = path.relative(root, entryPath);
+        if (!excludedAssets.includes(relativePath)) excludedAssets.push(relativePath);
+      }
+    }
+  }
+}
+
 copyDirectory(root, output);
+removeOversizedAssets(output);
 console.log(`Built Cloudflare Pages output in ${path.relative(root, output)}`);
 if (excludedAssets.length) {
   console.log(`Excluded ${excludedAssets.length} assets over Cloudflare's 25 MiB limit:`);
