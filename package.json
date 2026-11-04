@@ -2,7 +2,7 @@
   "scripts": {
     "build": "node scripts/build-cloudflare.js",
     "preview": "npx wrangler pages dev dist",
-    "deploy": "npm run build && npx wrangler pages deploy ./dist",
+    "deploy": "npm run build && npx wrangler pages deploy ./dist --project-name=classgames",
     "deploy:pages": "npm run deploy"
   },
   "devDependencies": {
