@@ -10,6 +10,8 @@ const excludedDirectories = new Set([
   'node_modules',
   'dist',
 ]);
+const maxAssetSize = 25 * 1024 * 1024;
+const excludedAssets = [];
 
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
@@ -26,6 +28,11 @@ function copyDirectory(source, destination) {
     if (entry.isDirectory()) {
       copyDirectory(sourcePath, destinationPath);
     } else if (entry.isFile()) {
+      const size = entry.size || fs.statSync(sourcePath).size;
+      if (size > maxAssetSize) {
+        excludedAssets.push(path.relative(root, sourcePath));
+        continue;
+      }
       fs.copyFileSync(sourcePath, destinationPath);
     }
   }
@@ -33,3 +40,7 @@ function copyDirectory(source, destination) {
 
 copyDirectory(root, output);
 console.log(`Built Cloudflare Pages output in ${path.relative(root, output)}`);
+if (excludedAssets.length) {
+  console.log(`Excluded ${excludedAssets.length} assets over Cloudflare's 25 MiB limit:`);
+  excludedAssets.forEach((file) => console.log(`- ${file}`));
+}
